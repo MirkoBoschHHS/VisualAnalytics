@@ -25,7 +25,7 @@ def navigation(nav, df_crimi2):
 
     elif nav == "results":
         df_crimi = df_crimi2
-        polygonen = gpd.read_file('gemeente_2020_v2.shp')
+        polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
         polygonen[polygonen['H2O'] == 'NEE']
         polygonen = polygonen[['GM_NAAM', 'geometry']]
         polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
