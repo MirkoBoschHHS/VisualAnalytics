@@ -21,4 +21,4 @@ pd.set_option('display.max_columns', None) # Print alles van de DataFrame pandas
 
 
 # Maak een titel
-st.title('Dashboard')
+st.title('Dashboard!')
