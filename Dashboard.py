@@ -12,13 +12,26 @@ import os
 from streamlit_folium import folium_static
 import folium
 
-
-
+import navigation
 
 # Enkele standaard opties
 st.set_page_config(layout="wide") # Zorgt voor default wide op streamlit
 pd.set_option('display.max_columns', None) # Print alles van de DataFrame pandas
 
 
-# Maak een titel
-st.title('Dashboard!')
+st.sidebar.title("Navigation")
+nav = st.sidebar.radio("Go to:", ['Home', 'results'])
+
+st.sidebar.title("About")
+st.sidebar.info('This app is made by Mirko Bosch en Sjoerd Fijnje.')
+
+
+navigation.navigation(nav)
+
+
+
+
+
+
+
+
