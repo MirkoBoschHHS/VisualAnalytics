@@ -1,14 +1,30 @@
 import streamlit as st
+import base64
 
 
 def navigation(nav):
 
     if nav == "Home":
-        st.title('Home')
+        # # st.markdown("Afbeeldingen/Home page.gif")
+        # """### gif from local file"""
+        # file_ = open("Afbeeldingen/Home page.gif", "rb")
+        # contents = file_.read()
+        # data_url = base64.b64encode(contents).decode("utf-8")
+        # file_.close()
+        #
+        # st.markdown(
+        #     f'<img src="data:image/gif;base64,{data_url}" alt="cat gif">',
+        #     unsafe_allow_html=True,
+        # )
 
-        st.write('Dit dashboard bevat informatie over criminaliteit in Nederland. '
-                'De gegevens word wekelijks geupdate en is het beste te zien op een 1920x1080 scherm. '
-                '\nGemaakt door Sjoerd Fijnje en Mirko Bosch in opdracht van de HvA minor Data Science.')
+        st.image("Afbeeldingen/Home page.gif", width=1400,)
+
+
+        # st.title('Home')
+        #
+        # st.write('Dit dashboard bevat informatie over criminaliteit in Nederland. '
+        #         'De gegevens word wekelijks geupdate en is het beste te zien op een 1920x1080 scherm. '
+        #         '\nGemaakt door Sjoerd Fijnje en Mirko Bosch in opdracht van de HvA minor Data Science.')
 
     elif nav == "results":
         st.title('Results List')

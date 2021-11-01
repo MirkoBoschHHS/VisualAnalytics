@@ -22,8 +22,7 @@ pd.set_option('display.max_columns', None) # Print alles van de DataFrame pandas
 st.sidebar.title("Navigation")
 nav = st.sidebar.radio("Go to:", ['Home', 'results'])
 
-st.sidebar.title("About")
-st.sidebar.info('This app is made by Mirko Bosch en Sjoerd Fijnje.')
+
 
 
 navigation.navigation(nav)
@@ -31,7 +30,5 @@ navigation.navigation(nav)
 
 
 
-
-
-
-
+st.sidebar.title("About")
+st.sidebar.info('This app is made by Mirko Bosch en Sjoerd Fijnje.')
