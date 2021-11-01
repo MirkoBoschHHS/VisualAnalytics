@@ -24,6 +24,9 @@ def navigation(nav, df_crimi2):
 
 
     elif nav == "results":
+        c1, c2, c3 = st.beta_columns((1, 3, 1))
+
+
         df_crimi = df_crimi2
         polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
         polygonen[polygonen['H2O'] == 'NEE']
@@ -47,7 +50,9 @@ def navigation(nav, df_crimi2):
                           legend_name='Geregistreerde misdrijven per 1000 inwoners',
                           nan_fill_color='black').add_to(m)
 
-        st.folium_static(m)
+
+        with c2:
+            folium_static(m)
 
     elif nav == "Dataframe":
         st.title("Het gedownloade dataframe")
