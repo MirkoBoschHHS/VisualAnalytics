@@ -6,3 +6,4 @@ statsmodels==0.12.2
 numpy==1.21.2
 folium==0.12.1
 streamlit-folium==0.4.0
+cbsodata==2.26.0
