@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from streamlit_autorefresh import st_autorefresh
 import numpy as np
 import requests
 import plotly.figure_factory as ff
@@ -12,13 +13,16 @@ import os
 from streamlit_folium import folium_static
 import folium
 import cbsodata
+import datetime
 
 import navigation
 
+
+
 @st.cache
-def download_data():
+def download_data(date):
     df_crimi = pd.DataFrame(cbsodata.get_data('83648NED'))
-    df_veilig = pd.DataFrame(cbsodata.get_data('81877NED'))
+    # df_veilig = pd.DataFrame(cbsodata.get_data('81877NED'))
 
     df_crimi = df_crimi[df_crimi['GeregistreerdeMisdrijvenPer1000Inw_3'] >= 0]
     df_crimi.drop(columns='ID', inplace=True)
@@ -74,17 +78,16 @@ def download_data():
     return df_crimi2
 
 
-
-
-
 # Enkele standaard opties
 st.set_page_config(layout="wide") # Zorgt voor default wide op streamlit
 pd.set_option('display.max_columns', None) # Print alles van de DataFrame pandas
 
 
-with st.spinner("Please wait while we are downloading..."):
-    df_crimi2 = download_data()
-st.balloons()
+
+st_autorefresh(interval=120 * 60 * 1000, key="dataframerefresh")
+
+with st.spinner("Please wait while we are downloading everything ..."):
+    df_crimi2 = download_data(datetime.datetime.now().hour)
 
 
 st.sidebar.title("Navigation")

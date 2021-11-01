@@ -15,5 +15,6 @@ def navigation(nav, df_crimi2):
 
     elif nav == "Dataframe":
         st.title("Het gedownloade dataframe")
+        st.write("Dit dataframe word automatisch dagelijks geupdate. De data waarmee dit gecreerd word heeft een tragere interval. ")
         st.dataframe(df_crimi2)
 
