@@ -24,7 +24,7 @@ def navigation(nav, df_crimi2):
 
 
     elif nav == "results":
-        c1, c2, c3 = st.beta_columns((1, 3, 1))
+        c1, c2, c3 = st.st.columns((1, 3, 1))
 
 
         df_crimi = df_crimi2
