@@ -11,21 +11,89 @@ from plotly.subplots import make_subplots
 import os
 from streamlit_folium import folium_static
 import folium
+import cbsodata
 
 import navigation
+
+@st.cache
+def download_data():
+    df_crimi = pd.DataFrame(cbsodata.get_data('83648NED'))
+    df_veilig = pd.DataFrame(cbsodata.get_data('81877NED'))
+
+    df_crimi = df_crimi[df_crimi['GeregistreerdeMisdrijvenPer1000Inw_3'] >= 0]
+    df_crimi.drop(columns='ID', inplace=True)
+    groepen = ['Misdrijven, totaal',
+               '1 Vermogensmisdrijven',
+               '2 Vernielingen,misdropenborde/gezag',
+               '3 Gewelds- en seksuele misdrijven',
+               '4 Misdrijven WvSr (overig)',
+               '5 Verkeersmisdrijven',
+               '6 Drugsmisdrijven',
+               '7 Vuurwapenmisdrijven',
+               '9 Misdrijven overige wetten']
+
+    df_crimi = df_crimi[df_crimi['SoortMisdrijf'].isin(groepen)]
+
+    gemeenten = pd.DataFrame(
+        cbsodata.get_data('70072NED', select=['Perioden', 'RegioS', 'KoppelvariabeleRegioCode_306']))
+
+    jaren = [*range(2010, 2021)]
+    jaren = [str(jaar) for jaar in jaren]
+    gemeenten = gemeenten[gemeenten['Perioden'].isin(jaren)]
+
+    gemeenten.dropna(inplace=True)
+
+    gemeenten = gemeenten[gemeenten['KoppelvariabeleRegioCode_306'].str.contains('GM')]
+
+    gemeenten_2010 = gemeenten[gemeenten['Perioden'] == '2010']['RegioS']
+    gemeenten_2011 = gemeenten[gemeenten['Perioden'] == '2011']['RegioS']
+    gemeenten_2012 = gemeenten[gemeenten['Perioden'] == '2012']['RegioS']
+    gemeenten_2013 = gemeenten[gemeenten['Perioden'] == '2013']['RegioS']
+    gemeenten_2014 = gemeenten[gemeenten['Perioden'] == '2014']['RegioS']
+    gemeenten_2015 = gemeenten[gemeenten['Perioden'] == '2015']['RegioS']
+    gemeenten_2016 = gemeenten[gemeenten['Perioden'] == '2016']['RegioS']
+    gemeenten_2017 = gemeenten[gemeenten['Perioden'] == '2017']['RegioS']
+    gemeenten_2018 = gemeenten[gemeenten['Perioden'] == '2018']['RegioS']
+    gemeenten_2019 = gemeenten[gemeenten['Perioden'] == '2019']['RegioS']
+    gemeenten_2020 = gemeenten[gemeenten['Perioden'] == '2020']['RegioS']
+
+    df_1 = df_crimi[(df_crimi['Perioden'] == '2010') & (df_crimi['RegioS'].isin(gemeenten_2010))]
+    df_2 = df_crimi[(df_crimi['Perioden'] == '2011') & (df_crimi['RegioS'].isin(gemeenten_2011))]
+    df_3 = df_crimi[(df_crimi['Perioden'] == '2012') & (df_crimi['RegioS'].isin(gemeenten_2012))]
+    df_4 = df_crimi[(df_crimi['Perioden'] == '2013') & (df_crimi['RegioS'].isin(gemeenten_2013))]
+    df_5 = df_crimi[(df_crimi['Perioden'] == '2014') & (df_crimi['RegioS'].isin(gemeenten_2014))]
+    df_6 = df_crimi[(df_crimi['Perioden'] == '2015') & (df_crimi['RegioS'].isin(gemeenten_2015))]
+    df_7 = df_crimi[(df_crimi['Perioden'] == '2016') & (df_crimi['RegioS'].isin(gemeenten_2016))]
+    df_8 = df_crimi[(df_crimi['Perioden'] == '2017') & (df_crimi['RegioS'].isin(gemeenten_2017))]
+    df_9 = df_crimi[(df_crimi['Perioden'] == '2018') & (df_crimi['RegioS'].isin(gemeenten_2018))]
+    df_10 = df_crimi[(df_crimi['Perioden'] == '2019') & (df_crimi['RegioS'].isin(gemeenten_2019))]
+    df_11 = df_crimi[(df_crimi['Perioden'] == '2020') & (df_crimi['RegioS'].isin(gemeenten_2020))]
+
+    df_crimi2 = pd.concat([df_1, df_2, df_3, df_4, df_5, df_6, df_7, df_8, df_9, df_10, df_11])
+
+    return df_crimi2
+
+
+
+
 
 # Enkele standaard opties
 st.set_page_config(layout="wide") # Zorgt voor default wide op streamlit
 pd.set_option('display.max_columns', None) # Print alles van de DataFrame pandas
 
 
+with st.spinner("Please wait while we are downloading..."):
+    df_crimi2 = download_data()
+st.balloons()
+
+
 st.sidebar.title("Navigation")
-nav = st.sidebar.radio("Go to:", ['Home', 'results'])
+nav = st.sidebar.radio("Go to:", ['Home', 'results', 'Dataframe'])
 
 
 
+navigation.navigation(nav, df_crimi2)
 
-navigation.navigation(nav)
 
 
 
