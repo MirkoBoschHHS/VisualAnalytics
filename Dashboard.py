@@ -115,7 +115,7 @@ with st.spinner("Please wait while we are downloading everything ..."):
 
 
 st.sidebar.title("Navigation")
-nav = st.sidebar.radio("Go to:", ['Home', 'results', 'Dataframe', "Tweede", "Derde"])
+nav = st.sidebar.radio("Go to:", ['Home', 'Statestieken', 'results', 'Dataframe', "Tweede", "Derde"])
 
 
 
