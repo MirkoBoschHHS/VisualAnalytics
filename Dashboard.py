@@ -23,7 +23,7 @@ import navigation
 @st.cache
 def download_data(date):
     df_crimi = pd.DataFrame(cbsodata.get_data('83648NED'))
-    # df_veilig = pd.DataFrame(cbsodata.get_data('81877NED'))
+    df_veilig = pd.DataFrame(cbsodata.get_data('81877NED'))
 
     df_crimi = df_crimi[df_crimi['GeregistreerdeMisdrijvenPer1000Inw_3'] >= 0]
     df_crimi.drop(columns='ID', inplace=True)
@@ -76,7 +76,7 @@ def download_data(date):
 
     df_crimi2 = pd.concat([df_1, df_2, df_3, df_4, df_5, df_6, df_7, df_8, df_9, df_10, df_11])
 
-    return df_crimi2
+    return df_crimi2, df_veilig
 
 
 # Enkele standaard opties
@@ -92,11 +92,11 @@ with st.spinner("Please wait while we are downloading everything ..."):
 
 
 st.sidebar.title("Navigation")
-nav = st.sidebar.radio("Go to:", ['Home', 'results', 'Dataframe'])
+nav = st.sidebar.radio("Go to:", ['Home', 'results', 'Dataframe', "Tweede"])
 
 
 
-navigation.navigation(nav, df_crimi2)
+navigation.navigation(nav, df_crimi2, df_veilig)
 
 
 
