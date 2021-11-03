@@ -76,6 +76,29 @@ def download_data(date):
 
     df_crimi2 = pd.concat([df_1, df_2, df_3, df_4, df_5, df_6, df_7, df_8, df_9, df_10, df_11])
 
+    del (df_1, df_2, df_3, df_4, df_5, df_6, df_7, df_8, df_9, df_10, df_11)
+
+    df_veilig = df_veilig[['RegioS', 'Perioden', 'RapportcijferVeiligheidInBuurt_18']]
+
+    df_veilig = df_veilig[df_veilig['Perioden'] == '2019']
+    df_veilig.drop(columns='Perioden', inplace=True)
+
+    df_veilig = df_veilig[~(df_veilig['RegioS'].str.contains('RE'))]
+    df_veilig = df_veilig[~(df_veilig['RegioS'].str.contains('PD'))]
+    df_veilig = df_veilig[~(df_veilig['RegioS'].str.contains('PV'))]
+    df_veilig = df_veilig[~(df_veilig['RegioS'].str.contains('LD'))]
+    df_veilig = df_veilig[~(df_veilig['RegioS'].str.contains('BT'))]
+
+    df_veilig['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
+    df_veilig['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
+    df_veilig['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
+    df_veilig['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
+
+    df_veilig = df_veilig[df_veilig['RapportcijferVeiligheidInBuurt_18'] >= 6.6]
+
+    df_veilig.index = range(0, len(df_veilig))
+    df_veilig = df_veilig[~(df_veilig.index.isin([0, 53, 54, 55, 56, 57]))]
+
     return df_crimi2, df_veilig
 
 

@@ -65,10 +65,47 @@ def navigation(nav, df_crimi2, df_veilig):
         st.write("Dit dataframe word automatisch dagelijks geupdate. De data waarmee dit gecreerd word heeft een tragere interval. ")
         st.dataframe(df_crimi2)
 
+    elif nav == "Statestieken":
+        statestiek(df_crimi2)
 
 
+def statestiek(df_crimi_soort):
+    # df_crimi_soort = pd.DataFrame(cbsodata.get_data('83648NED', \
+    #                                                 select=['SoortMisdrijf', 'RegioS', 'Perioden',
+    #                                                         'GeregistreerdeMisdrijvenRelatief_2']))
 
+    groepen = ['Misdrijven, totaal',
+               '1 Vermogensmisdrijven',
+               '2 Vernielingen,misdropenborde/gezag',
+               '3 Gewelds- en seksuele misdrijven',
+               '4 Misdrijven WvSr (overig)',
+               '5 Verkeersmisdrijven',
+               '6 Drugsmisdrijven',
+               '7 Vuurwapenmisdrijven',
+               '9 Misdrijven overige wetten']
 
+    df_crimi_soort = df_crimi_soort[(df_crimi_soort['RegioS'] == 'Nederland') & (df_crimi_soort['Perioden'] == '2020')]
+    df_crimi_soort = df_crimi_soort[df_crimi_soort['SoortMisdrijf'].isin(groepen)]
+    df_crimi_soort.drop(columns=['RegioS', 'Perioden'], inplace=True)
+
+    df_crimi_soort = df_crimi_soort[df_crimi_soort['GeregistreerdeMisdrijvenRelatief_2'] >= 1]
+    df_crimi_soort = df_crimi_soort[df_crimi_soort['GeregistreerdeMisdrijvenRelatief_2'] != 100]
+    df_crimi_soort.columns = ['Soort misdrijf', 'Percentage geregistreerde misdrijven']
+
+    df_crimi_soort.set_index('Soort misdrijf', inplace=True)
+    df_crimi_soort = df_crimi_soort.sort_values('Percentage geregistreerde misdrijven', ascending=False)
+    df_crimi_soort['Soort misdrijf'] = ['1', '5', '2', '3', '4', '6', '7']
+
+    fig = px.bar(data_frame=df_crimi_soort,
+                 x=df_crimi_soort.index,
+                 y='Percentage geregistreerde misdrijven',
+                 color='Soort misdrijf',
+                 color_discrete_sequence=px.colors.qualitative.G10,
+                 title='Staafdiagram percentages soorten misdrijven in Nederland in 2020',
+                 labels={'index': 'Soort misdrijf'})
+
+    # fig.show()
+    st.prlotly_chart(fig)
 
 @st.cache
 def tweede(df_crimi, df_veilig):
