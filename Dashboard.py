@@ -88,7 +88,7 @@ pd.set_option('display.max_columns', None) # Print alles van de DataFrame pandas
 st_autorefresh(interval=120 * 60 * 1000, key="dataframerefresh")
 
 with st.spinner("Please wait while we are downloading everything ..."):
-    df_crimi2 = download_data(datetime.datetime.now().hour)
+    df_crimi2, df_veilig = download_data(datetime.datetime.now().date())
 
 
 st.sidebar.title("Navigation")
