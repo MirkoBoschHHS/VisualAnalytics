@@ -1,6 +1,6 @@
 import streamlit as st
 import base64
-import geopandas as gpd
+# import geopandas as gpd
 import streamlit as st
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
@@ -15,12 +15,13 @@ from plotly.subplots import make_subplots
 import os
 from streamlit_folium import folium_static
 import folium
-
+import cbsodata
+import datetime
 
 def navigation(nav, df_crimi2, df_veilig):
 
     if nav == "Home":
-        st.image("Afbeeldingen/Home page.gif", width=1400,)
+        st.image("Afbeelding/Home_page.gif", width=1400,)
 
 
     elif nav == "results":
@@ -68,11 +69,20 @@ def navigation(nav, df_crimi2, df_veilig):
     elif nav == "Statestieken":
         statestiek(df_crimi2)
 
+@st.cache
+def download(date):
+    return pd.DataFrame(cbsodata.get_data('83648NED', \
+                                          select=['SoortMisdrijf', 'RegioS', 'Perioden',
+                                                  'GeregistreerdeMisdrijvenRelatief_2']))
 
-def statestiek(df_crimi_soort):
+
+def statestiek(df_crimi):
     # df_crimi_soort = pd.DataFrame(cbsodata.get_data('83648NED', \
     #                                                 select=['SoortMisdrijf', 'RegioS', 'Perioden',
     #                                                         'GeregistreerdeMisdrijvenRelatief_2']))
+
+    df_crimi_soort = download(datetime.datetime.now().date())
+
 
     groepen = ['Misdrijven, totaal',
                '1 Vermogensmisdrijven',
@@ -105,7 +115,79 @@ def statestiek(df_crimi_soort):
                  labels={'index': 'Soort misdrijf'})
 
     # fig.show()
-    st.prlotly_chart(fig)
+    st.plotly_chart(fig)
+
+    df_crimi_box = df_crimi[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
+    df_crimi_box = df_crimi_box[df_crimi_box['SoortMisdrijf'] == 'Misdrijven, totaal']
+    df_crimi_box.drop(columns='SoortMisdrijf', inplace=True)
+    df_crimi_box.columns = ['Gemeente', 'Jaartal', 'Geregisteerde misdrijven per 1000 inwoners']
+
+    fig = px.box(data_frame=df_crimi_box,
+                 x='Jaartal',
+                 y='Geregisteerde misdrijven per 1000 inwoners',
+                 hover_data=['Jaartal', 'Gemeente', 'Geregisteerde misdrijven per 1000 inwoners'],
+                 title='Boxplot aantal geregisteerde misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan')
+
+    _10 = {'x': 0,
+           'y': 53.5,
+           'showarrow': False,
+           'text': '<b>50.5</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _11 = {'x': 1,
+           'y': 52.8,
+           'showarrow': False,
+           'text': '<b>49.8</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _12 = {'x': 2,
+           'y': 50.5,
+           'showarrow': False,
+           'text': '<b>47.5</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _13 = {'x': 3,
+           'y': 48.5,
+           'showarrow': False,
+           'text': '<b>45.5</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _14 = {'x': 4,
+           'y': 44.3,
+           'showarrow': False,
+           'text': '<b>41.3</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _15 = {'x': 5,
+           'y': 42.8,
+           'showarrow': False,
+           'text': '<b>39.8</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _16 = {'x': 6,
+           'y': 40.2,
+           'showarrow': False,
+           'text': '<b>37.2</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _17 = {'x': 7,
+           'y': 35.7,
+           'showarrow': False,
+           'text': '<b>32.7</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _18 = {'x': 8,
+           'y': 33.9,
+           'showarrow': False,
+           'text': '<b>30.9</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _19 = {'x': 9,
+           'y': 36.4,
+           'showarrow': False,
+           'text': '<b>33.4</b>',
+           'font': {'size': 13, 'color': 'black'}}
+    _20 = {'x': 10,
+           'y': 37.1,
+           'showarrow': False,
+           'text': '<b>34.1</b>',
+           'font': {'size': 13, 'color': 'black'}}
+
+    fig.update_layout({'annotations': [_10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20]})
+
+    st.plotly_chart(fig)
+
 
 @st.cache
 def tweede(df_crimi, df_veilig):
