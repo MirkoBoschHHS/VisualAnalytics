@@ -54,7 +54,7 @@ def navigation(nav, df_crimi2, df_veilig):
         col2.plotly_chart(fig4)
 
 
-@st.cache
+
 def locaties(df_crimi2):
     polygonen = load_shp()
     df_crimi_kaart = df_crimi2[
