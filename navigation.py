@@ -1,6 +1,9 @@
 import streamlit as st
 import base64
-import geopandas as gpd
+try:
+    import geopandas as gpd
+except:
+    pass
 import streamlit as st
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
@@ -26,35 +29,8 @@ def navigation(nav, df_crimi2, df_veilig):
 
 
     elif nav == "Locaties criminaliteit":
-        c1, c2, c3 = st.columns((1, 3, 1))
-
-
-        # df_crimi = df_crimi2
-        polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
-        polygonen[polygonen['H2O'] == 'NEE']
-        polygonen = polygonen[['GM_NAAM', 'geometry']]
-        polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
-        df_crimi_kaart = df_crimi2[
-            (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
-
-        m = folium.Map(location=[52.25, 5.4],
-                       tiles='Carto DB Positron',
-                       zoom_start=8)
-
-        folium.Choropleth(geo_data=polygonen,
-                          name='geometry',
-                          data=df_crimi_kaart,
-                          columns=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'],
-                          key_on='feature.properties.RegioS',
-                          fill_color='YlOrRd',
-                          fill_opacity=0.7,
-                          line_opacity=0.2,
-                          legend_name='Geregistreerde misdrijven per 1000 inwoners',
-                          nan_fill_color='black').add_to(m)
-
-
-        with c2:
-            folium_static(m)
+        m = locaties(df_crimi2)
+        folium_static(m)
 
     # elif nav == "Tweede":
 
@@ -68,13 +44,50 @@ def navigation(nav, df_crimi2, df_veilig):
     elif nav == "Cijfers criminaliteit":
         fig1 = Spreidingsdiagram(df_crimi2, df_veilig)
         fig2 = distplot(df_crimi2)
+        fig3 = staafdiagram(df_crimi2)
+        fig4 = boxplot(df_crimi2)
 
         col1, col2 = st.columns(2)
 
         col1.plotly_chart(fig1)
+        col1.plotly_chart(fig3)
         col2.plotly_chart(fig2)
+        col2.plotly_chart(fig4)
 
-        statestiek(df_crimi2)
+
+@st.cache
+def locaties(df_crimi2):
+    polygonen = load_shp()
+    df_crimi_kaart = df_crimi2[
+        (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
+
+    m = folium.Map(location=[52.25, 5.4],
+                   tiles='Carto DB Positron',
+                   zoom_start=8)
+
+    folium.Choropleth(geo_data=polygonen,
+                      name='geometry',
+                      data=df_crimi_kaart,
+                      columns=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'],
+                      key_on='feature.properties.RegioS',
+                      fill_color='YlOrRd',
+                      fill_opacity=0.7,
+                      line_opacity=0.2,
+                      legend_name='Geregistreerde misdrijven per 1000 inwoners',
+                      nan_fill_color='black').add_to(m)
+
+    return m
+
+@st.cache
+def load_shp():
+    # df_crimi = df_crimi2
+    polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
+    polygonen[polygonen['H2O'] == 'NEE']
+    polygonen = polygonen[['GM_NAAM', 'geometry']]
+    polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
+    return polygonen
+
+
 
 @st.cache
 def download(date):
@@ -82,14 +95,9 @@ def download(date):
                                           select=['SoortMisdrijf', 'RegioS', 'Perioden',
                                                   'GeregistreerdeMisdrijvenRelatief_2']))
 
-
-def statestiek(df_crimi):
-    # df_crimi_soort = pd.DataFrame(cbsodata.get_data('83648NED', \
-    #                                                 select=['SoortMisdrijf', 'RegioS', 'Perioden',
-    #                                                         'GeregistreerdeMisdrijvenRelatief_2']))
-
+@st.cache
+def staafdiagram(df_crimi):
     df_crimi_soort = download(datetime.datetime.now().date())
-
 
     groepen = ['Misdrijven, totaal',
                '1 Vermogensmisdrijven',
@@ -122,8 +130,11 @@ def statestiek(df_crimi):
                  labels={'index': 'Soort misdrijf'})
 
     # fig.show()
-    st.plotly_chart(fig)
+    # st.plotly_chart(fig)
+    return fig
 
+@st.cache
+def boxplot(df_crimi):
     df_crimi_box = df_crimi[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
     df_crimi_box = df_crimi_box[df_crimi_box['SoortMisdrijf'] == 'Misdrijven, totaal']
     df_crimi_box.drop(columns='SoortMisdrijf', inplace=True)
@@ -193,8 +204,8 @@ def statestiek(df_crimi):
 
     fig.update_layout({'annotations': [_10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20]})
 
-    st.plotly_chart(fig)
-
+    # st.plotly_chart(fig)
+    return fig
 
 @st.cache
 def Spreidingsdiagram(df_crimi, df_veilig):
@@ -263,7 +274,7 @@ def Spreidingsdiagram(df_crimi, df_veilig):
     return fig
 
 
-
+@st.cache
 def distplot(df_crimi):
     df_crimi_dist = df_crimi[df_crimi['SoortMisdrijf'] == 'Misdrijven, totaal']
     df_crimi_dist = df_crimi_dist[df_crimi_dist['Perioden'] == '2020']
