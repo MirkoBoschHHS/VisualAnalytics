@@ -29,13 +29,13 @@ def navigation(nav, df_crimi2, df_veilig):
         c1, c2, c3 = st.columns((1, 3, 1))
 
 
-        df_crimi = df_crimi2
+        # df_crimi = df_crimi2
         polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
         polygonen[polygonen['H2O'] == 'NEE']
         polygonen = polygonen[['GM_NAAM', 'geometry']]
         polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
-        df_crimi_kaart = df_crimi[
-            (df_crimi['Perioden'] == '2020') & (df_crimi['SoortMisdrijf'] == 'Misdrijven, totaal')]
+        df_crimi_kaart = df_crimi2[
+            (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
 
         m = folium.Map(location=[52.25, 5.4],
                        tiles='Carto DB Positron',
