@@ -1,6 +1,6 @@
 import streamlit as st
 import base64
-# import geopandas as gpd
+import geopandas as gpd
 import streamlit as st
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
@@ -17,6 +17,7 @@ from streamlit_folium import folium_static
 import folium
 import cbsodata
 import datetime
+from plotly.figure_factory import create_distplot
 
 def navigation(nav, df_crimi2, df_veilig):
 
@@ -24,49 +25,55 @@ def navigation(nav, df_crimi2, df_veilig):
         st.image("Afbeelding/Home_page.gif", width=1400,)
 
 
-    elif nav == "results":
+    elif nav == "Locaties criminaliteit":
         c1, c2, c3 = st.columns((1, 3, 1))
 
 
-        # df_crimi = df_crimi2
-        # polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
-        # polygonen[polygonen['H2O'] == 'NEE']
-        # polygonen = polygonen[['GM_NAAM', 'geometry']]
-        # polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
-        # df_crimi_kaart = df_crimi[
-        #     (df_crimi['Perioden'] == '2020') & (df_crimi['SoortMisdrijf'] == 'Misdrijven, totaal')]
-        #
-        # m = folium.Map(location=[52.25, 5.4],
-        #                tiles='Carto DB Positron',
-        #                zoom_start=8)
-        #
-        # folium.Choropleth(geo_data=polygonen,
-        #                   name='geometry',
-        #                   data=df_crimi_kaart,
-        #                   columns=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'],
-        #                   key_on='feature.properties.RegioS',
-        #                   fill_color='YlOrRd',
-        #                   fill_opacity=0.7,
-        #                   line_opacity=0.2,
-        #                   legend_name='Geregistreerde misdrijven per 1000 inwoners',
-        #                   nan_fill_color='black').add_to(m)
-        #
-        #
-        # with c2:
-        #     folium_static(m)
+        df_crimi = df_crimi2
+        polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
+        polygonen[polygonen['H2O'] == 'NEE']
+        polygonen = polygonen[['GM_NAAM', 'geometry']]
+        polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
+        df_crimi_kaart = df_crimi[
+            (df_crimi['Perioden'] == '2020') & (df_crimi['SoortMisdrijf'] == 'Misdrijven, totaal')]
 
-    elif nav == "Tweede":
-        tweede(df_crimi2, df_veilig)
+        m = folium.Map(location=[52.25, 5.4],
+                       tiles='Carto DB Positron',
+                       zoom_start=8)
 
-    elif nav == "Derde":
-        derde(df_crimi2, df_veilig)
+        folium.Choropleth(geo_data=polygonen,
+                          name='geometry',
+                          data=df_crimi_kaart,
+                          columns=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'],
+                          key_on='feature.properties.RegioS',
+                          fill_color='YlOrRd',
+                          fill_opacity=0.7,
+                          line_opacity=0.2,
+                          legend_name='Geregistreerde misdrijven per 1000 inwoners',
+                          nan_fill_color='black').add_to(m)
+
+
+        with c2:
+            folium_static(m)
+
+    # elif nav == "Tweede":
+
+
 
     elif nav == "Dataframe":
         st.title("Het gedownloade dataframe")
         st.write("Dit dataframe word automatisch dagelijks geupdate. De data waarmee dit gecreerd word heeft een tragere interval. ")
         st.dataframe(df_crimi2)
 
-    elif nav == "Statestieken":
+    elif nav == "Cijfers criminaliteit":
+        fig1 = Spreidingsdiagram(df_crimi2, df_veilig)
+        fig2 = distplot(df_crimi2)
+
+        col1, col2 = st.columns(2)
+
+        col1.plotly_chart(fig1)
+        col2.plotly_chart(fig2)
+
         statestiek(df_crimi2)
 
 @st.cache
@@ -190,7 +197,7 @@ def statestiek(df_crimi):
 
 
 @st.cache
-def tweede(df_crimi, df_veilig):
+def Spreidingsdiagram(df_crimi, df_veilig):
     df_crimi_scatter = df_crimi[df_crimi['Perioden'] == '2019'][
         ['SoortMisdrijf', 'RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
     df_crimi_scatter = df_crimi_scatter[df_crimi_scatter['SoortMisdrijf'] == 'Misdrijven, totaal']
@@ -252,68 +259,26 @@ def tweede(df_crimi, df_veilig):
 
     fig.update_layout({'annotations': [ams, rot, utr, dha, r]})
 
-    fig.show()
+    # st.plotly_chart(fig)
+    return fig
 
 
-def derde(df_crimi, df_veilig):
-    df_crimi_scatter = df_crimi[df_crimi['Perioden'] == '2019'][
-        ['SoortMisdrijf', 'RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
-    df_crimi_scatter = df_crimi_scatter[df_crimi_scatter['SoortMisdrijf'] == 'Misdrijven, totaal']
-    df_crimi_scatter.drop(columns='SoortMisdrijf', inplace=True)
 
-    df_crimi_scatter['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
-    df_crimi_scatter['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
-    df_crimi_scatter['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
-    df_crimi_scatter['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
+def distplot(df_crimi):
+    df_crimi_dist = df_crimi[df_crimi['SoortMisdrijf'] == 'Misdrijven, totaal']
+    df_crimi_dist = df_crimi_dist[df_crimi_dist['Perioden'] == '2020']
+    df_crimi_dist = df_crimi_dist[['RegioS', 'Perioden', 'OpgehelderdeMisdrijvenRelatief_5']]
+    df_crimi_dist.columns = ['Gemeente', 'Jaartal', 'Percentage opgehelderde misdrijven']
+    df_crimi_dist.drop(columns='Jaartal', inplace=True)
 
-    df_crimi_scatter = df_veilig.merge(df_crimi_scatter, on='RegioS')
+    fig = create_distplot([df_crimi_dist['Percentage opgehelderde misdrijven']],
+                          group_labels=['% opgehelderde misdrijven'],
+                          bin_size=2,
+                          show_rug=False)
 
-    df_crimi_scatter.columns=['Gemeente', 'Cijfer veiligheid in de buurt', 'Geregisteerde misdrijven per 1000 inwoners']
+    fig.update_xaxes(title_text='Percentage opgehelderde misdrijven', range=[8, 42])
+    fig.update_yaxes(title_text='Dichtheid')
+    fig.update_layout(title_text='Distplot percentage opgehelderde misdrijven per gemeente in Nederland in 2020')
 
-    fig = px.scatter(data_frame=df_crimi_scatter,
-                     x='Cijfer veiligheid in de buurt',
-                     y='Geregisteerde misdrijven per 1000 inwoners',
-                     hover_data=df_crimi_scatter.columns,
-                     trendline='ols',
-                     trendline_color_override='black',
-                     title='Spreidingsdiagram cijfer veiligheid enquête vs. aantal misdrijven per 1000 inwoners per gemeente in 2019',
-                     range_y=(0, 110))
-
-    ams = {'x': 7,
-           'y': 96.3,
-           'showarrow': True,
-           'arrowhead': 5,
-           'text': '<b>Amsterdam</b>',
-           'font': {'size': 13, 'color': 'black'}}
-
-    rot = {'x': 6.7,
-           'y': 82.4,
-           'showarrow': True,
-           'arrowhead': 5,
-           'text': '<b>Rotterdam</b>',
-           'font': {'size': 13, 'color': 'black'}}
-
-    utr = {'x': 7.091,
-           'y': 78.6,
-           'showarrow': True,
-           'arrowhead': 5,
-           'text': '<b>Utrecht</b>',
-           'font': {'size': 13, 'color': 'black'}}
-
-    dha = {'x': 7,
-           'y': 70.8,
-           'showarrow': True,
-           'arrowhead': 5,
-           'text': '<b>Den Haag</b>',
-           'font': {'size': 13, 'color': 'black'}}
-
-    r = {'x': 7.7,
-         'y': 90,
-         'showarrow': False,
-         'text': '<b>r = -0.69</b>',
-         'font': {'size': 15, 'color': 'black'},
-         'bgcolor': 'gold'}
-
-    fig.update_layout({'annotations': [ams, rot, utr, dha, r]})
-
-    fig.show()
+    # fig.show()
+    return fig
