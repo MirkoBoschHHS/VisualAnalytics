@@ -5,3 +5,5 @@ font="serif"
 
 [server]
 runOnSave = true
+
+maxUploadSize = 300
