@@ -1,9 +1,8 @@
 import streamlit as st
 import base64
-try:
-    import geopandas as gpd
-except:
-    pass
+
+import geopandas as gpd
+
 import streamlit as st
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
