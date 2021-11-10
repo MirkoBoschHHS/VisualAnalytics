@@ -230,7 +230,7 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
                      hover_data=df_crimi_scatter.columns,
                      trendline='ols',
                      trendline_color_override='black',
-                     title='Spreidingsdiagram cijfer veiligheid enquête vs. misdrijven / 1000 inw. per gemeente in 2019',
+                     title='Spreidingsdiagram cijfer veiligheid vs. misdrijven / 1000 inw. per gemeente in ' + str(jaar),
                      range_y=(0, 140))
 
     def x_cor(stad):
