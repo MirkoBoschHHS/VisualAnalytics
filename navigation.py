@@ -66,26 +66,25 @@ def locaties(df_crimi2):
     st.write(polygonen_2.head())
     st.write("HOI")
 
-    # polygonen = load_shp()
-    # df_crimi_kaart = df_crimi2[
-    #     (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
-    #
-    # m = folium.Map(location=[52.25, 5.4],
-    #                tiles='Carto DB Positron',
-    #                zoom_start=8)
-    #
-    # folium.Choropleth(geo_data=polygonen_2,
-    #                   name='geometry',
-    #                   data=df_crimi_kaart,
-    #                   columns=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'],
-    #                   key_on='feature.properties.RegioS',
-    #                   fill_color='YlOrRd',
-    #                   fill_opacity=0.7,
-    #                   line_opacity=0.2,
-    #                   legend_name='Geregistreerde misdrijven per 1000 inwoners',
-    #                   nan_fill_color='black').add_to(m)
-    #
-    # return m
+    df_crimi_kaart = df_crimi2[
+        (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
+    st.write("Hallo")
+    m = folium.Map(location=[52.25, 5.4],
+                   tiles='Carto DB Positron',
+                   zoom_start=8)
+    st.write("Laatste")
+    folium.Choropleth(geo_data=polygonen_2,
+                      name='geometry',
+                      data=df_crimi_kaart,
+                      columns=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'],
+                      key_on='feature.properties.RegioS',
+                      fill_color='YlOrRd',
+                      fill_opacity=0.7,
+                      line_opacity=0.2,
+                      legend_name='Geregistreerde misdrijven per 1000 inwoners',
+                      nan_fill_color='black').add_to(m)
+
+    return m
 
 @st.cache
 def load_shp():
