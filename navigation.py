@@ -64,7 +64,8 @@ def locaties(df_crimi2):
 
     m = folium.Map(location=[52.25, 5.4],
                    tiles='Carto DB Positron',
-                   zoom_start=8)
+                   zoom_start=8,
+                   width=1400,height=1000)
 
     folium.Choropleth(geo_data=polygonen_2,
                       name='geometry',
