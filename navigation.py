@@ -56,15 +56,8 @@ def navigation(nav, df_crimi2, df_veilig):
 
 
 def locaties(df_crimi2):
-    polygonen_2 = pd.read_pickle('Gemeente_data/polygonen.pkl')
+    polygonen_2 = load_polygonen()
     polygonen_2['geometry'] = polygonen_2['geometry'].simplify(500)
-    # polygonen_2.head()
-    # geometry = gpd.GeoSeries.from_wkt(polygonen_2['geometry'])
-    # polygonen_2 = gpd.GeoDataFrame(polygonen_2, geometry=geometry, crs='EPSG:28992')
-
-    # polygonen_2 = load_shp()
-
-
 
     df_crimi_kaart = df_crimi2[
         (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
@@ -84,18 +77,11 @@ def locaties(df_crimi2):
                       legend_name='Geregistreerde misdrijven per 1000 inwoners',
                       nan_fill_color='black').add_to(m)
 
-
     return m
 
-# @st.cache
-# def load_shp():
-#     # df_crimi = df_crimi2
-#     polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
-#     polygonen[polygonen['H2O'] == 'NEE']
-#     polygonen = polygonen[['GM_NAAM', 'geometry']]
-#     polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
-#     return polygonen
-
+@st.cache
+def load_polygonen():
+    return pd.read_pickle('Gemeente_data/polygonen.pkl')
 
 
 @st.cache
