@@ -90,23 +90,32 @@ def load_polygonen():
 
 @st.cache
 def download(date):
-    return pd.DataFrame(cbsodata.get_data('83648NED',
+    df_crimi_soort = pd.DataFrame(cbsodata.get_data('83648NED',
                                           select=['SoortMisdrijf', 'RegioS', 'Perioden',
                                                   'GeregistreerdeMisdrijvenRelatief_2']))
+    df_crimi_soort['SoortMisdrijf'] = df_crimi_soort['SoortMisdrijf'].str.replace('\d+', '')
+    return df_crimi_soort
 
-@st.cache
+#@st.cache
 def staafdiagram(df_crimi, jaar):
     df_crimi_soort = download(datetime.datetime.now().date())
 
+    groep = list(df_crimi_soort['SoortMisdrijf'].unique())
+
+
+
     groepen = ['Misdrijven, totaal',
-               '1 Vermogensmisdrijven',
-               '2 Vernielingen,misdropenborde/gezag',
-               '3 Gewelds- en seksuele misdrijven',
-               '4 Misdrijven WvSr (overig)',
-               '5 Verkeersmisdrijven',
-               '6 Drugsmisdrijven',
-               '7 Vuurwapenmisdrijven',
-               '9 Misdrijven overige wetten']
+               ' Vermogensmisdrijven',
+               ' Vernielingen,misdropenborde/gezag',
+               ' Gewelds- en seksuele misdrijven',
+               ' Misdrijven WvSr (overig)',
+               ' Verkeersmisdrijven',
+               ' Drugsmisdrijven',
+               ' Vuurwapenmisdrijven',
+               ' Misdrijven overige wetten']
+
+    groepen = groep
+    # st.write(groepen)
 
     df_crimi_soort = df_crimi_soort[(df_crimi_soort['RegioS'] == 'Nederland') & (df_crimi_soort['Perioden'] == str(jaar))]
     df_crimi_soort = df_crimi_soort[df_crimi_soort['SoortMisdrijf'].isin(groepen)]
@@ -118,15 +127,20 @@ def staafdiagram(df_crimi, jaar):
 
     df_crimi_soort.set_index('Soort misdrijf', inplace=True)
     df_crimi_soort = df_crimi_soort.sort_values('Percentage geregistreerde misdrijven', ascending=False)
+    df_crimi_soort = df_crimi_soort[:7]
+
     df_crimi_soort['Soort misdrijf'] = ['1', '5', '2', '3', '4', '6', '7']
+
+
 
     fig = px.bar(data_frame=df_crimi_soort,
                  x=df_crimi_soort.index,
                  y='Percentage geregistreerde misdrijven',
                  color='Soort misdrijf',
                  color_discrete_sequence=px.colors.qualitative.G10,
-                 title='Staafdiagram percentages soorten misdrijven in Nederland in '+ str(jaar),
-                 labels={'index': 'Soort misdrijf'})
+                 title='Staafdiagram percentages soorten misdrijven in Nederland in '+ str(jaar))#,
+                 # labels={'index': 'SoortMisdrijf'})
+    fig.update_layout(showlegend=False)
 
     # fig.show()
     # st.plotly_chart(fig)
@@ -207,7 +221,7 @@ def boxplot(df_crimi):
     # st.plotly_chart(fig)
     return fig
 
-#@st.cache
+@st.cache
 def Spreidingsdiagram(df_crimi, df_veilig, jaar):
     df_crimi_scatter = df_crimi[df_crimi['Perioden'] == str(jaar)][
         ['SoortMisdrijf', 'RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
