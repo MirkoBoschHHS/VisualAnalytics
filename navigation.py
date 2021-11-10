@@ -143,7 +143,8 @@ def boxplot(df_crimi):
                  x='Jaartal',
                  y='Geregisteerde misdrijven per 1000 inwoners',
                  hover_data=['Jaartal', 'Gemeente', 'Geregisteerde misdrijven per 1000 inwoners'],
-                 title='Boxplot aantal geregisteerde misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan')
+                 title='Boxplot aantal geregisteerde misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan',
+                 color_discrete_sequence=px.colors.qualitative.Set2)
 
     _10 = {'x': 0,
            'y': 53.5,
@@ -272,16 +273,26 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
            'text': '<b>Den Haag</b>',
            'font': {'size': 13, 'color': 'black'}}
 
+    results = px.get_trendline_results(fig)
+    # st.write(results.iloc[0]["px_fit_results"].summary())
+    results = results.iloc[0]["px_fit_results"].rsquared
+
     r = {'x': 7.7,
          'y': 120,
          'showarrow': False,
-         'text': '<b>r = -0.69</b>',
+         'text': '<b>R² = '+ str(results) + '</b>',
          'font': {'size': 15, 'color': 'black'},
          'bgcolor': 'gold'}
 
     fig.update_layout({'annotations': [ams, rot, utr, dha, r]})
 
     # st.plotly_chart(fig)
+
+
+
+
+
+
     return fig
 
 
