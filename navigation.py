@@ -206,7 +206,7 @@ def boxplot(df_crimi):
     # st.plotly_chart(fig)
     return fig
 
-@st.cache
+#@st.cache
 def Spreidingsdiagram(df_crimi, df_veilig, jaar):
     df_crimi_scatter = df_crimi[df_crimi['Perioden'] == str(jaar)][
         ['SoortMisdrijf', 'RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
@@ -230,38 +230,50 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
                      trendline='ols',
                      trendline_color_override='black',
                      title='Spreidingsdiagram cijfer veiligheid enquête vs. aantal misdrijven per 1000 inwoners per gemeente in 2019',
-                     range_y=(0, 110))
+                     range_y=(0, 140))
 
-    ams = {'x': 7,
-           'y': 96.3,
+    def x_cor(stad):
+        return df_crimi_scatter.loc[df_crimi_scatter['Gemeente'] == str(stad)].iat[0, 1]
+
+    def y_cor(stad):
+        return df_crimi_scatter.loc[df_crimi_scatter['Gemeente'] == str(stad)].iat[0, 2]
+
+
+    # st.write(df_crimi_scatter)
+    # st.write(df_crimi_scatter.loc[df_crimi_scatter['Gemeente'] == "Amsterdam"].iat[0,2])
+    # st.write(df_crimi_scatter['Gemeente'] == "Amsterdam")
+    # st.write(df_crimi_scatter.iat[0,1])
+
+    ams = {'x': x_cor("Amsterdam"),
+           'y': y_cor("Amsterdam"),
            'showarrow': True,
            'arrowhead': 5,
            'text': '<b>Amsterdam</b>',
            'font': {'size': 13, 'color': 'black'}}
 
-    rot = {'x': 6.7,
-           'y': 82.4,
+    rot = {'x': x_cor("Rotterdam"),
+           'y': y_cor("Rotterdam"),
            'showarrow': True,
            'arrowhead': 5,
            'text': '<b>Rotterdam</b>',
            'font': {'size': 13, 'color': 'black'}}
 
-    utr = {'x': 7.091,
-           'y': 78.6,
+    utr = {'x': x_cor("Utrecht"),
+           'y': y_cor("Utrecht"),
            'showarrow': True,
            'arrowhead': 5,
            'text': '<b>Utrecht</b>',
            'font': {'size': 13, 'color': 'black'}}
 
-    dha = {'x': 7,
-           'y': 70.8,
+    dha = {'x': x_cor("'s-Gravenhage"),
+           'y': y_cor("'s-Gravenhage"),
            'showarrow': True,
            'arrowhead': 5,
            'text': '<b>Den Haag</b>',
            'font': {'size': 13, 'color': 'black'}}
 
     r = {'x': 7.7,
-         'y': 90,
+         'y': 120,
          'showarrow': False,
          'text': '<b>r = -0.69</b>',
          'font': {'size': 15, 'color': 'black'},
