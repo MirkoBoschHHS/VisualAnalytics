@@ -221,11 +221,11 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
 
     df_crimi_scatter = df_veilig.merge(df_crimi_scatter, on='RegioS')
 
-    df_crimi_scatter.columns = ['Gemeente', 'Cijfer veiligheid in de buurt',
+    df_crimi_scatter.columns = ['Gemeente', 'Cijfer enquête veiligheid in de buurt',
                                 'Geregisteerde misdrijven per 1000 inwoners']
 
     fig = px.scatter(data_frame=df_crimi_scatter,
-                     x='Cijfer veiligheid in de buurt',
+                     x='Cijfer enquête veiligheid in de buurt',
                      y='Geregisteerde misdrijven per 1000 inwoners',
                      hover_data=df_crimi_scatter.columns,
                      trendline='ols',
