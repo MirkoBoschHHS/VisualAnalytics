@@ -20,6 +20,7 @@ import folium
 import cbsodata
 import datetime
 from plotly.figure_factory import create_distplot
+from statsmodels.formula.api import ols
 
 def navigation(nav, df_crimi2, df_veilig):
 
@@ -51,13 +52,20 @@ def navigation(nav, df_crimi2, df_veilig):
         fig2 = distplot(df_crimi2, jaar)
         fig3 = staafdiagram(df_crimi2, jaar)
         fig4 = boxplot(df_crimi2, gemeente, jaar)
+        fig5 = regessie(df_crimi2)
 
         col1, col2 = st.columns(2)
-
         col1.plotly_chart(fig1)
+        col2.plotly_chart(fig5)
+
+        col1, col2, col3 = st.columns(3)
         col1.plotly_chart(fig3)
         col2.plotly_chart(fig2)
-        col2.plotly_chart(fig4)
+        col3.plotly_chart(fig4)
+
+
+
+
 
 
 
@@ -155,9 +163,10 @@ def staafdiagram(df_crimi, jaar):
                  y='Percentage geregistreerde misdrijven',
                  color='Soort misdrijf',
                  color_discrete_sequence=px.colors.qualitative.G10,
-                 title='Staafdiagram percentages soorten misdrijven in Nederland in '+ str(jaar),
+                 title='Percentages soorten misdrijven in '+ str(jaar),
                  labels={'index': 'Soort Misdrijf'})
-    fig.update_layout(showlegend=False)
+    fig.update_layout(showlegend=False, width=500, xaxis_tickangle=50)
+    # fig.update_traces(width=0.4)
 
     # fig.show()
     # st.plotly_chart(fig)
@@ -174,9 +183,10 @@ def boxplot(df_crimi, gemeente, jaar):
                  x='Jaartal',
                  y='Geregisteerde misdrijven per 1000 inwoners',
                  hover_data=['Jaartal', 'Gemeente', 'Geregisteerde misdrijven per 1000 inwoners'],
-                 title='Boxplot aantal misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan',
+                 title='Aantal misdrijven / 1000 inw. per gemeente per jaar met mediaan',
                  color_discrete_sequence=px.colors.qualitative.Set2)
 
+    fig.update_layout(width=550)
 
 
     _10 = {'x': 0,
@@ -297,9 +307,10 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar, gemeente):
                      hover_data=df_crimi_scatter.columns,
                      trendline='ols',
                      trendline_color_override='black',
-                     title='Spreidingsdiagram cijfer veiligheid vs. misdrijven / 1000 inw. per gemeente in ' + str(jaar),
+                     title='Cijfer veiligheid vs. misdrijven / 1000 inw. per gemeente in ' + str(jaar),
                      range_y=(0, 140))
 
+    fig.update_layout(width=700)
 
 
 
@@ -391,7 +402,66 @@ def distplot(df_crimi, jaar):
 
     fig.update_xaxes(title_text='Percentage misdrijven dat is opgehelderd', range=[8, 42])
     fig.update_yaxes(title_text='Dichtheid')
-    fig.update_layout(title_text='Histogram percentage opgehelderde misdrijven per gemeente in Nederland in ' + str(jaar))
+    fig.update_layout(title_text='Percentage opgehelderde misdrijven per gemeente in ' + str(jaar))
 
     # fig.show()
+    return fig
+
+
+
+
+@st.cache
+def regessie(df_crimi):
+    df_regressie = df_crimi[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
+    df_regressie = df_regressie[df_regressie['SoortMisdrijf'] == 'Misdrijven, totaal']
+    df_regressie.drop(columns='SoortMisdrijf', inplace=True)
+
+    bevolking = pd.DataFrame(cbsodata.get_data('70072NED', select=['RegioS', 'Perioden',
+                                        'KoppelvariabeleRegioCode_306', 'Bevolkingsdichtheid_57']))
+
+    bevolking.dropna(subset=['KoppelvariabeleRegioCode_306'], inplace=True)
+    bevolking = bevolking[bevolking['KoppelvariabeleRegioCode_306'].str.contains('GM')]
+    bevolking = bevolking[bevolking['Perioden'].isin(['2010', '2011', '2012', '2013', '2014', \
+                                                      '2015', '2016', '2017', '2018', '2019', '2020'])]
+    bevolking.drop(columns='KoppelvariabeleRegioCode_306', inplace=True)
+    df_regressie = df_regressie.merge(bevolking, on=['RegioS', 'Perioden'])
+    df_regressie['Perioden'] = df_regressie['Perioden'].astype(int)
+    df_regressie['ln_GeregistreerdeMisdrijvenPer1000Inw_3'] = np.log(df_regressie['GeregistreerdeMisdrijvenPer1000Inw_3'])
+    df_regressie['ln_Bevolkingsdichtheid_57'] = np.log(df_regressie['Bevolkingsdichtheid_57'])
+    regressie = ols('ln_GeregistreerdeMisdrijvenPer1000Inw_3 ~ Perioden + ln_Bevolkingsdichtheid_57', data=df_regressie).fit()
+    df_regressie['fitted values na terugtrans.'] = np.exp(regressie.fittedvalues)
+    df_regressie['residuen na terugtrans.'] = df_regressie['GeregistreerdeMisdrijvenPer1000Inw_3'] - df_regressie['fitted values na terugtrans.']
+    for i in range(0, len(df_regressie)):
+        df_regressie.loc[i, 'Hovertext'] = str(df_regressie.loc[i, 'Perioden']) + ', ' + df_regressie.loc[i, 'RegioS']
+
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+                x=df_regressie['fitted values na terugtrans.'],
+                y=df_regressie['GeregistreerdeMisdrijvenPer1000Inw_3'],
+                mode='markers',
+                hovertext=df_regressie['Hovertext'],
+                marker={'size':4},
+                showlegend=False,
+                name=''))
+
+    fig.add_trace(go.Scatter(
+                x=(10,140),
+                y=(10,140),
+                mode='lines',
+                line={'dash':'dot'},
+                showlegend=False))
+
+    R2 = {'x': 120,
+          'y': 90,
+          'showarrow': False,
+          'text': '<b>' + 'R' + '<sup>2</sup>' + ' = ' + str(round(regressie.rsquared, 2)) + '</b>',
+          'font': {'size': 15, 'color': 'black'},
+          'bgcolor': 'gold'}
+
+    fig.update_xaxes(title_text='Gefitte waarde misdrijven / 1000 inw.')
+    fig.update_yaxes(title_text='Werkelijke waarde misdrijven / 1000 inw.')
+    fig.update_layout(title_text='Gefitte vs. werkelijke waarden geregistreerde misdrijven / 1000 inw. 2010-2020')
+    fig.update_layout({'annotations':[R2]})
     return fig
