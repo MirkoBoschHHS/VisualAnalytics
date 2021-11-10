@@ -107,15 +107,7 @@ def download_data(date):
 #     df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(" Z.", "")
 #     df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(" ZH.", "")
 
-    df_crimi2['RegioS'].replace('Beek (L.)', 'Beek', inplace=True)
-    df_crimi2['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
-    df_crimi2['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
-    df_crimi2['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
-    df_crimi2['RegioS'].replace('Laren (NH.)', 'Laren', inplace=True)
-    df_crimi2['RegioS'].replace('Middelburg (Z.)', 'Middelburg', inplace=True)
-    df_crimi2['RegioS'].replace('Rijswijk (ZH.)', 'Rijswijk', inplace=True)
-    df_crimi2['RegioS'].replace('Stein (L.)', 'Stein', inplace=True)
-    df_crimi2['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
+
 
     return df_crimi2, df_veilig
 
