@@ -84,6 +84,7 @@ def locaties(df_crimi2):
                       legend_name='Geregistreerde misdrijven per 1000 inwoners',
                       nan_fill_color='black').add_to(m)
 
+    st.write("En weer terug")
     return m
 
 @st.cache
