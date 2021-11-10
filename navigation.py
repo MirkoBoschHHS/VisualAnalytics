@@ -82,6 +82,10 @@ def locaties(df_crimi2):
                       legend_name='Geregistreerde misdrijven per 1000 inwoners',
                       nan_fill_color='black').add_to(m)
 
+    m.Tooltip("hoi")
+
+
+
     return m
 
 @st.cache
@@ -99,7 +103,7 @@ def download(date):
     df_crimi_soort['SoortMisdrijf'] = df_crimi_soort['SoortMisdrijf'].str.replace('\d+', '')
     return df_crimi_soort
 
-#@st.cache
+@st.cache
 def staafdiagram(df_crimi, jaar):
     df_crimi_soort = download(datetime.datetime.now().month)
 
@@ -146,7 +150,7 @@ def staafdiagram(df_crimi, jaar):
     # st.plotly_chart(fig)
     return fig
 
-#@st.cache
+@st.cache
 def boxplot(df_crimi, gemeente, jaar):
     df_crimi_box = df_crimi[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
     df_crimi_box = df_crimi_box[df_crimi_box['SoortMisdrijf'] == 'Misdrijven, totaal']
@@ -257,7 +261,7 @@ def boxplot(df_crimi, gemeente, jaar):
     # st.plotly_chart(fig)
     return fig
 
-#@st.cache
+@st.cache
 def Spreidingsdiagram(df_crimi, df_veilig, jaar, gemeente):
     df_crimi_scatter = df_crimi[df_crimi['Perioden'] == str(jaar)][
         ['SoortMisdrijf', 'RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
@@ -293,10 +297,7 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar, gemeente):
         return df_crimi_scatter.loc[df_crimi_scatter['Gemeente'] == str(stad)].iat[0, 2]
 
 
-    # st.write(df_crimi_scatter)
-    # st.write(df_crimi_scatter.loc[df_crimi_scatter['Gemeente'] == "Amsterdam"].iat[0,2])
-    # st.write(df_crimi_scatter['Gemeente'] == "Amsterdam")
-    # st.write(df_crimi_scatter.iat[0,1])
+
     def gemeente_toevoegen(gemeente):
         a = {'x': x_cor(gemeente),
                'y': y_cor(gemeente),
