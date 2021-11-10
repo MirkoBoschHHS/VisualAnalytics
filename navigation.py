@@ -29,7 +29,8 @@ def navigation(nav, df_crimi2, df_veilig):
 
     elif nav == "Locaties criminaliteit":
         m = locaties(df_crimi2)
-        st.folium_static(m)
+        with st:
+            folium_static(m)
 
     # elif nav == "Tweede":
 
