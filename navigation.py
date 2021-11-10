@@ -28,10 +28,12 @@ def navigation(nav, df_crimi2, df_veilig):
 
 
     elif nav == "Locaties criminaliteit":
-        m = locaties(df_crimi2)
-        col1, col2 = st.columns([1, 5])
-        with col2:
-            folium_static(m)
+        # m = locaties(df_crimi2)
+        # col1, col2 = st.columns([1, 5])
+        # with col2:
+        #     folium_static(m)
+        import streamlit.components.v1 as components
+        components.html('map.html')
 
 
 
@@ -71,6 +73,7 @@ def locaties(df_crimi2):
         (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
     st.write("Hallo")
     m = folium.Map(location=[52.25, 5.4],
+                   tiles='Carto DB Positron',
                    zoom_start=8)
     st.write("Laatste")
     folium.Choropleth(geo_data=polygonen_2,
