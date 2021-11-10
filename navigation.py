@@ -100,9 +100,7 @@ def download(date):
 def staafdiagram(df_crimi, jaar):
     df_crimi_soort = download(datetime.datetime.now().date())
 
-    groep = list(df_crimi_soort['SoortMisdrijf'].unique())
-
-
+    
 
     groepen = ['Misdrijven, totaal',
                ' Vermogensmisdrijven',
@@ -121,7 +119,7 @@ def staafdiagram(df_crimi, jaar):
     df_crimi_soort = df_crimi_soort[df_crimi_soort['SoortMisdrijf'].isin(groepen)]
     df_crimi_soort.drop(columns=['RegioS', 'Perioden'], inplace=True)
 
-    df_crimi_soort = df_crimi_soort[df_crimi_soort['GeregistreerdeMisdrijvenRelatief_2'] >= 1]
+    df_crimi_soort = df_crimi_soort[df_crimi_soort['GeregistreerdeMisdrijvenRelatief_2'] > 0]
     df_crimi_soort = df_crimi_soort[df_crimi_soort['GeregistreerdeMisdrijvenRelatief_2'] != 100]
     df_crimi_soort.columns = ['Soort misdrijf', 'Percentage geregistreerde misdrijven']
 
