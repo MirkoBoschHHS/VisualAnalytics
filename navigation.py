@@ -54,7 +54,7 @@ def navigation(nav, df_crimi2, df_veilig):
         col2.plotly_chart(fig4)
 
 
-@st.cache
+
 def locaties(df_crimi2):
     polygonen_2 = pd.read_pickle('Gemeente_data/polygonen.pkl')
     polygonen_2['geometry'] = polygonen_2['geometry'].simplify(0.5)
