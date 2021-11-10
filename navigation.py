@@ -56,10 +56,9 @@ def navigation(nav, df_crimi2, df_veilig):
 
 
 def locaties(df_crimi2):
-    polygonen = pd.read_csv("Gemeente_data/polygonen.csv", index_col=0)
-    polygonen.head()
-    geometry = gpd.GeoSeries.from_wkt(polygonen['geometry'])
-    polygonen = gpd.GeoDataFrame(polygonen, geometry=geometry, crs='EPSG:28992')
+    polygonen_2 = pd.read_csv('polygonen.csv', index_col=0)
+    geometry = gpd.GeoSeries.from_wkt(polygonen_2['geometry'])
+    polygonen_2 = gpd.GeoDataFrame(polygonen_2, geometry=geometry, crs='EPSG:28992')
 
     # polygonen = load_shp()
     df_crimi_kaart = df_crimi2[
@@ -69,7 +68,7 @@ def locaties(df_crimi2):
                    tiles='Carto DB Positron',
                    zoom_start=8)
 
-    folium.Choropleth(geo_data=polygonen,
+    folium.Choropleth(geo_data=polygonen_2,
                       name='geometry',
                       data=df_crimi_kaart,
                       columns=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'],
