@@ -70,7 +70,7 @@ def locaties(df_crimi2):
     df_crimi_kaart = df_crimi2[
         (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
 
-    st.write(polygonen_2)
+
 
     m = folium.Map(location=[52.25, 5.5],
                    tiles='Carto DB Positron',
