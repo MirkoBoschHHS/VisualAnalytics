@@ -64,7 +64,7 @@ def navigation(nav, df_crimi2, df_veilig):
 
 def locaties(df_crimi2):
     polygonen_2 = pd.read_pickle('Gemeente_data/polygonen.pkl')
-    polygonen_2['geometry'].convex_hull
+    polygonen_2['geometry'] = polygonen_2['geometry'].convex_hull
     # polygonen_2.head()
     # geometry = gpd.GeoSeries.from_wkt(polygonen_2['geometry'])
     # polygonen_2 = gpd.GeoDataFrame(polygonen_2, geometry=geometry, crs='EPSG:28992')
