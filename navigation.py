@@ -38,12 +38,13 @@ def navigation(nav, df_crimi2, df_veilig):
         st.title("Het gedownloade dataframe")
         st.write("Dit dataframe word automatisch dagelijks geupdate. De data waarmee dit gecreerd word heeft een tragere interval. ")
         st.dataframe(df_crimi2)
+        st.dataframe(load_polygonen())
 
     elif nav == "Cijfers criminaliteit":
         jaar = st.sidebar.select_slider("Kies een jaar om weer te geven:", [*range(2010,2021)])
 
         # st.write(list(df_crimi2['RegioS'].unique()))
-        gemeente = st.sidebar.multiselect("Kies enkele gementes om te highlighten:", list(df_crimi2['RegioS'].unique()), 'Amsterdam')
+        gemeente = st.sidebar.multiselect("Kies enkele gemeentes om te highlighten:", list(df_crimi2['RegioS'].unique()), 'Amsterdam')
 
 
         fig1 = Spreidingsdiagram(df_crimi2, df_veilig, jaar, gemeente)

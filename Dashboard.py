@@ -99,6 +99,9 @@ def download_data(date):
     df_veilig.index = range(0, len(df_veilig))
     df_veilig = df_veilig[~(df_veilig.index.isin([0, 53, 54, 55, 56, 57]))]
 
+    # df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(' (gemeente)', '')
+    df_crimi2['RegioS'] = df_crimi2.RegioS.replace({'(gemeente)': ''}, regex=True)
+
     return df_crimi2, df_veilig
 
 
@@ -115,7 +118,7 @@ with st.spinner("Please wait while we are downloading everything ..."):
 
 
 st.sidebar.title("Navigation")
-nav = st.sidebar.radio("Go to:", ['Home', 'Cijfers criminaliteit',  "Locaties criminaliteit"])
+nav = st.sidebar.radio("Go to:", ['Home', 'Cijfers criminaliteit',  "Locaties criminaliteit", "Dataframe"])
 
 
 
