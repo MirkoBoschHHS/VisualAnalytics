@@ -157,7 +157,7 @@ def boxplot(df_crimi):
                  x='Jaartal',
                  y='Geregisteerde misdrijven per 1000 inwoners',
                  hover_data=['Jaartal', 'Gemeente', 'Geregisteerde misdrijven per 1000 inwoners'],
-                 title='Boxplot aantal geregisteerde misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan',
+                 title='Boxplot aantal misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan',
                  color_discrete_sequence=px.colors.qualitative.Set2)
 
     _10 = {'x': 0,
@@ -235,16 +235,16 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
 
     df_crimi_scatter = df_veilig.merge(df_crimi_scatter, on='RegioS')
 
-    df_crimi_scatter.columns = ['Gemeente', 'Cijfer veiligheid in de buurt',
+    df_crimi_scatter.columns = ['Gemeente', 'Cijfer enquête veiligheid in de buurt',
                                 'Geregisteerde misdrijven per 1000 inwoners']
 
     fig = px.scatter(data_frame=df_crimi_scatter,
-                     x='Cijfer veiligheid in de buurt',
+                     x='Cijfer enquête veiligheid in de buurt',
                      y='Geregisteerde misdrijven per 1000 inwoners',
                      hover_data=df_crimi_scatter.columns,
                      trendline='ols',
                      trendline_color_override='black',
-                     title='Spreidingsdiagram cijfer veiligheid enquête vs. misdrijven / 1000 inw. per gemeente in 2019',
+                     title='Spreidingsdiagram cijfer veiligheid vs. misdrijven / 1000 inw. per gemeente in ' + str(jaar),
                      range_y=(0, 140))
 
     def x_cor(stad):
@@ -289,7 +289,7 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
 
     results = px.get_trendline_results(fig)
     # st.write(results.iloc[0]["px_fit_results"].summary())
-    results = results.iloc[0]["px_fit_results"].rsquared
+    results = round(results.iloc[0]["px_fit_results"].rsquared, 2)
 
     r = {'x': 7.7,
          'y': 120,
@@ -323,9 +323,9 @@ def distplot(df_crimi, jaar):
                           bin_size=2,
                           show_rug=False)
 
-    fig.update_xaxes(title_text='Percentage opgehelderde misdrijven', range=[8, 42])
+    fig.update_xaxes(title_text='Percentage misdrijven dat is opgehelderd', range=[8, 42])
     fig.update_yaxes(title_text='Dichtheid')
-    fig.update_layout(title_text='Distplot percentage opgehelderde misdrijven per gemeente in Nederland in '+ str(jaar))
+    fig.update_layout(title_text='Histogram percentage opgehelderde misdrijven per gemeente in Nederland in ' + str(jaar))
 
     # fig.show()
     return fig
