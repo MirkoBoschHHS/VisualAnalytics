@@ -38,7 +38,7 @@ def navigation(nav, df_crimi2, df_veilig):
         st.title("Het gedownloade dataframe")
         st.write("Dit dataframe word automatisch dagelijks geupdate. De data waarmee dit gecreerd word heeft een tragere interval. ")
         st.dataframe(df_crimi2)
-        st.dataframe(load_polygonen())
+        # st.dataframe(load_polygonen())
 
     elif nav == "Cijfers criminaliteit":
         jaar = st.sidebar.select_slider("Kies een jaar om weer te geven:", [*range(2010,2021)])
@@ -64,7 +64,7 @@ def navigation(nav, df_crimi2, df_veilig):
 def locaties(df_crimi2):
     polygonen_2 = load_polygonen()
 
-    st.write(polygonen_2)
+    st.dataframe(polygonen_2)
 
 
     df_crimi_kaart = df_crimi2[
