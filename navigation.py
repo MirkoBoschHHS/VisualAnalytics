@@ -31,7 +31,7 @@ def navigation(nav, df_crimi2, df_veilig):
         m = locaties(df_crimi2)
         col1, col2 = st.columns([1, 5])
         with col2:
-            folium_static(m)
+            folium_static(m, width=1400,height=1000)
 
 
 
@@ -64,8 +64,7 @@ def locaties(df_crimi2):
 
     m = folium.Map(location=[52.25, 5.4],
                    tiles='Carto DB Positron',
-                   zoom_start=8,
-                   width=1400,height=1000)
+                   zoom_start=8)
 
     folium.Choropleth(geo_data=polygonen_2,
                       name='geometry',
