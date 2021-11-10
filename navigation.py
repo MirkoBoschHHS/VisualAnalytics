@@ -138,8 +138,8 @@ def staafdiagram(df_crimi, jaar):
                  y='Percentage geregistreerde misdrijven',
                  color='Soort misdrijf',
                  color_discrete_sequence=px.colors.qualitative.G10,
-                 title='Staafdiagram percentages soorten misdrijven in Nederland in '+ str(jaar))#,
-                 # labels={'index': 'SoortMisdrijf'})
+                 title='Staafdiagram percentages soorten misdrijven in Nederland in '+ str(jaar),
+                 labels={'index': 'Soort Misdrijf'})
     fig.update_layout(showlegend=False)
 
     # fig.show()
