@@ -143,7 +143,7 @@ def boxplot(df_crimi):
                  x='Jaartal',
                  y='Geregisteerde misdrijven per 1000 inwoners',
                  hover_data=['Jaartal', 'Gemeente', 'Geregisteerde misdrijven per 1000 inwoners'],
-                 title='Boxplot aantal geregisteerde misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan',
+                 title='Boxplot aantal misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan',
                  color_discrete_sequence=px.colors.qualitative.Set2)
 
     _10 = {'x': 0,
