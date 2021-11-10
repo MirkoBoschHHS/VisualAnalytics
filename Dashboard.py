@@ -99,10 +99,13 @@ def download_data(date):
     df_veilig.index = range(0, len(df_veilig))
     df_veilig = df_veilig[~(df_veilig.index.isin([0, 53, 54, 55, 56, 57]))]
 
-
-
-
-
+    
+#     df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace("(", "").str.replace(")", "").str.replace(" gemeente", "")
+#     df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(" L.", "")
+#     df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(" O.", "")
+#     df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(" NH.", "")
+#     df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(" Z.", "")
+#     df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(" ZH.", "")
 
 
     return df_crimi2, df_veilig
