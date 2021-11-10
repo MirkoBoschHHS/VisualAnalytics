@@ -64,6 +64,7 @@ def navigation(nav, df_crimi2, df_veilig):
 def locaties(df_crimi2):
     polygonen_2 = load_polygonen()
 
+    df_crimi2 = df_crimi2[(df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
     polygonen_2 = polygonen_2.merge(df_crimi2[['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']], on='RegioS', how='left')
 
     df_crimi_kaart = df_crimi2[
