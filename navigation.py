@@ -275,7 +275,7 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
 
     results = px.get_trendline_results(fig)
     # st.write(results.iloc[0]["px_fit_results"].summary())
-    results = results.iloc[0]["px_fit_results"].rsquared
+    results = round(results.iloc[0]["px_fit_results"].rsquared, 2)
 
     r = {'x': 7.7,
          'y': 120,
