@@ -63,7 +63,8 @@ def locaties(df_crimi2):
 
     # polygonen_2 = load_shp()
 
-    polygonen_2.head()
+    st.write(polygonen_2.head())
+    st.write("HOI")
 
     # polygonen = load_shp()
     # df_crimi_kaart = df_crimi2[
