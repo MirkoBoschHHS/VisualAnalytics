@@ -428,8 +428,8 @@ def download_reg(date):
     return bevolking
 
 # @st.cache
-def regessie(df_crimi2, gemeente, jaar):
-    df_regressie = df_crimi2[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
+def regessie(df_crimi, gemeente, jaar):
+    df_regressie = df_crimi[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
     df_regressie = df_regressie[df_regressie['SoortMisdrijf'] == 'Misdrijven, totaal']
     df_regressie.drop(columns='SoortMisdrijf', inplace=True)
 
