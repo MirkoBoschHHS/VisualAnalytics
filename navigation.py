@@ -21,6 +21,12 @@ import cbsodata
 import datetime
 from plotly.figure_factory import create_distplot
 
+def load_polygonen():
+    polygonen_2 = pd.read_pickle('Gemeente_data/polygonen.pkl')
+    polygonen_2['geometry'] = polygonen_2['geometry'].simplify(500)
+    return polygonen_2
+
+
 def navigation(nav, df_crimi2, df_veilig):
 
     if nav == "Home":
@@ -90,10 +96,7 @@ def locaties(df_crimi2):
     return m
 
 @st.cache
-def load_polygonen():
-    polygonen_2 = pd.read_pickle('Gemeente_data/polygonen.pkl')
-    polygonen_2['geometry'] = polygonen_2['geometry'].simplify(500)
-    return polygonen_2
+
 
 
 @st.cache
