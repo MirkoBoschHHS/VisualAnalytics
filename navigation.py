@@ -31,7 +31,7 @@ def navigation(nav, df_crimi2, df_veilig):
         m = locaties(df_crimi2)
         col1, col2 = st.columns([1, 5])
         with col2:
-            folium_static(m, width=1400,height=1000)
+            folium_static(m, width=1000,height=600)
 
 
 
