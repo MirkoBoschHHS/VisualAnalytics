@@ -311,7 +311,7 @@ def distplot(df_crimi, jaar):
 
     fig.update_xaxes(title_text='Percentage opgehelderde misdrijven', range=[8, 42])
     fig.update_yaxes(title_text='Dichtheid')
-    fig.update_layout(title_text='Distplot percentage opgehelderde misdrijven per gemeente in Nederland in '+ str(jaar))
+    fig.update_layout(title_text='Histogram percentage opgehelderde misdrijven per gemeente in Nederland in ' + str(jaar))
 
     # fig.show()
     return fig
