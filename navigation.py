@@ -57,6 +57,7 @@ def navigation(nav, df_crimi2, df_veilig):
 
 def locaties(df_crimi2):
     polygonen = pd.read_csv("Gemeente_data/polygonen.csv", index_col=0)
+    polygonen.head()
     geometry = gpd.GeoSeries.from_wkt(polygonen['geometry'])
     polygonen = gpd.GeoDataFrame(polygonen, geometry=geometry, crs='EPSG:28992')
 
