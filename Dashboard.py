@@ -99,9 +99,7 @@ def download_data(date):
     df_veilig.index = range(0, len(df_veilig))
     df_veilig = df_veilig[~(df_veilig.index.isin([0, 53, 54, 55, 56, 57]))]
 
-    # df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace(' (gemeente)', '')
-    df_crimi2['RegioS'] = df_crimi2.RegioS.replace({'(gemeente)': ''}, regex=True)
-
+    df_crimi2['RegioS'] = df_crimi2['RegioS'].str.replace("(", "").str.replace(")", "").str.replace(" gemeente", "")
     return df_crimi2, df_veilig
 
 
@@ -116,9 +114,11 @@ st_autorefresh(interval=120 * 60 * 1000, key="dataframerefresh")
 with st.spinner("Please wait while we are downloading everything ..."):
     df_crimi2, df_veilig = download_data(datetime.datetime.now().month)
 
+# df_crimi2['RegioS'] = df_crimi2['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
+
 
 st.sidebar.title("Navigation")
-nav = st.sidebar.radio("Go to:", ['Home', 'Cijfers criminaliteit',  "Locaties criminaliteit", "Dataframe"])
+nav = st.sidebar.radio("Go to:", ['Home', 'Cijfers criminaliteit',  "Locaties criminaliteit"])
 
 
 

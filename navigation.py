@@ -64,7 +64,6 @@ def navigation(nav, df_crimi2, df_veilig):
 def locaties(df_crimi2):
     polygonen_2 = load_polygonen()
 
-    st.dataframe(polygonen_2)
 
 
     df_crimi_kaart = df_crimi2[
