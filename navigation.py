@@ -28,15 +28,15 @@ def navigation(nav, df_crimi2, df_veilig):
 
 
     elif nav == "Locaties criminaliteit":
-        # m = locaties(df_crimi2)
-        # col1, col2 = st.columns([1, 5])
-        # with col2:
-        #     folium_static(m)
-        import streamlit.components.v1 as components
-        HtmlFile = open("Gemeente_data/map.html", 'r', encoding='utf-8')
-        source_code = HtmlFile.read()
-        # print(source_code)
-        components.html(source_code)
+        m = locaties(df_crimi2)
+        col1, col2 = st.columns([1, 5])
+        with col2:
+            folium_static(m)
+        # import streamlit.components.v1 as components
+        # HtmlFile = open("Gemeente_data/map.html", 'r', encoding='utf-8')
+        # source_code = HtmlFile.read()
+        # # print(source_code)
+        # components.html(source_code)
 
 
 
@@ -64,6 +64,7 @@ def navigation(nav, df_crimi2, df_veilig):
 
 def locaties(df_crimi2):
     polygonen_2 = pd.read_pickle('Gemeente_data/polygonen.pkl')
+    polygonen_2['geometry'].convex_hull
     # polygonen_2.head()
     # geometry = gpd.GeoSeries.from_wkt(polygonen_2['geometry'])
     # polygonen_2 = gpd.GeoDataFrame(polygonen_2, geometry=geometry, crs='EPSG:28992')
@@ -93,14 +94,14 @@ def locaties(df_crimi2):
     st.write("En weer terug")
     return m
 
-@st.cache
-def load_shp():
-    # df_crimi = df_crimi2
-    polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
-    polygonen[polygonen['H2O'] == 'NEE']
-    polygonen = polygonen[['GM_NAAM', 'geometry']]
-    polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
-    return polygonen
+# @st.cache
+# def load_shp():
+#     # df_crimi = df_crimi2
+#     polygonen = gpd.read_file('Gemeente_data/gemeente_2020_v2.shp')
+#     polygonen[polygonen['H2O'] == 'NEE']
+#     polygonen = polygonen[['GM_NAAM', 'geometry']]
+#     polygonen.rename(columns={'GM_NAAM': 'RegioS'}, inplace=True)
+#     return polygonen
 
 
 
