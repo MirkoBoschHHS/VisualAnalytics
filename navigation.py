@@ -125,8 +125,7 @@ def staafdiagram(df_crimi, jaar):
 
     df_crimi_soort.set_index('Soort misdrijf', inplace=True)
     df_crimi_soort = df_crimi_soort.sort_values('Percentage geregistreerde misdrijven', ascending=False)
-    df_crimi_soort = df_crimi_soort[:7]
-
+   
     df_crimi_soort['Soort misdrijf'] = ['1', '5', '2', '3', '4', '6', '7']
 
 
