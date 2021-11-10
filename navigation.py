@@ -95,7 +95,7 @@ def locaties(df_crimi2):
     df_crimi2['RegioS'].replace('Rijswijk (ZH.)', 'Rijswijk', inplace=True)
     df_crimi2['RegioS'].replace('Stein (L.)', 'Stein', inplace=True)
     df_crimi2['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
-
+    df_crimi2['RegioS'].replace('Bergen NH.', 'Bergen', inplace=True)
 
     m = folium.Map(location=[52.25, 5.5],
                    tiles='Carto DB Positron',
