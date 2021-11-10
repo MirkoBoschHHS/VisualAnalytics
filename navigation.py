@@ -64,6 +64,17 @@ def navigation(nav, df_crimi2, df_veilig):
         col3.plotly_chart(fig4)
 
 
+        st.markdown("""
+        <style>
+        .big-font {
+            font-size:13px !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        st.markdown('<p class="big-font">*Alleen gemeenten die meegedaan hebben/voldoende enquêtes hebben ingevuld.</p>', unsafe_allow_html=True)
+
+
 
 
 
@@ -307,7 +318,7 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar, gemeente):
                      hover_data=df_crimi_scatter.columns,
                      trendline='ols',
                      trendline_color_override='black',
-                     title='Cijfer veiligheid vs. misdrijven / 1000 inw. per gemeente in ' + str(jaar),
+                     title='Cijfer veiligheid vs. misdrijven / 1000 inw. per gemeente* in ' + str(jaar),
                      range_y=(0, 140))
 
     fig.update_layout(width=700)
