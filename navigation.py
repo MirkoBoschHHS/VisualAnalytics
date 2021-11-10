@@ -52,7 +52,7 @@ def navigation(nav, df_crimi2, df_veilig):
         fig2 = distplot(df_crimi2, jaar)
         fig3 = staafdiagram(df_crimi2, jaar)
         fig4 = boxplot(df_crimi2, gemeente, jaar)
-        fig5 = regessie(df_crimi2)
+        fig5 = regessie(df_crimi2, gemeente, jaar)
 
         col1, col2 = st.columns(2)
         col1.plotly_chart(fig1)
@@ -419,22 +419,27 @@ def distplot(df_crimi, jaar):
     return fig
 
 
-
-
 @st.cache
-def regessie(df_crimi):
-    df_regressie = df_crimi[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
-    df_regressie = df_regressie[df_regressie['SoortMisdrijf'] == 'Misdrijven, totaal']
-    df_regressie.drop(columns='SoortMisdrijf', inplace=True)
-
+def download_reg(date):
     bevolking = pd.DataFrame(cbsodata.get_data('70072NED', select=['RegioS', 'Perioden',
-                                        'KoppelvariabeleRegioCode_306', 'Bevolkingsdichtheid_57']))
-
+                                                       'KoppelvariabeleRegioCode_306', 'Bevolkingsdichtheid_57']))
     bevolking.dropna(subset=['KoppelvariabeleRegioCode_306'], inplace=True)
     bevolking = bevolking[bevolking['KoppelvariabeleRegioCode_306'].str.contains('GM')]
     bevolking = bevolking[bevolking['Perioden'].isin(['2010', '2011', '2012', '2013', '2014', \
                                                       '2015', '2016', '2017', '2018', '2019', '2020'])]
     bevolking.drop(columns='KoppelvariabeleRegioCode_306', inplace=True)
+
+    return bevolking
+
+# @st.cache
+def regessie(df_crimi, gemeente, jaar):
+    df_regressie = df_crimi[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
+    df_regressie = df_regressie[df_regressie['SoortMisdrijf'] == 'Misdrijven, totaal']
+    df_regressie.drop(columns='SoortMisdrijf', inplace=True)
+
+    bevolking = download_reg(datetime.datetime.now().month)
+
+
     df_regressie = df_regressie.merge(bevolking, on=['RegioS', 'Perioden'])
     df_regressie['Perioden'] = df_regressie['Perioden'].astype(int)
     df_regressie['ln_GeregistreerdeMisdrijvenPer1000Inw_3'] = np.log(df_regressie['GeregistreerdeMisdrijvenPer1000Inw_3'])
@@ -464,6 +469,34 @@ def regessie(df_crimi):
                 line={'dash':'dot'},
                 showlegend=False))
 
+
+    def x_cor(stad, jaar):
+        return df_regressie.loc[df_regressie['RegioS'] == str(stad)].iat[(jaar-2010), 6]
+
+    def y_cor(stad, jaar):
+        return df_regressie.loc[df_regressie['RegioS'] == str(stad)].iat[(jaar-2010), 2]
+
+    # st.write(df_regressie.loc[df_regressie['RegioS'] == "Amsterdam"])
+    # st.write(y_cor("Amsterdam", 2010))
+
+
+    def gemeente_toevoegen(gemeente, jaar):
+        a = {'x': x_cor(gemeente, jaar),
+               'y': y_cor(gemeente, jaar),
+               'showarrow': True,
+               'arrowhead': 5,
+               'text': '<b>' + gemeente + '</b>',
+               'font': {'size': 13, 'color': 'black'}}
+        return a
+
+    annotations = []
+    for g in gemeente:
+        try:
+            annotations.append(gemeente_toevoegen(g, jaar))
+        except:
+            pass
+
+
     R2 = {'x': 120,
           'y': 90,
           'showarrow': False,
@@ -471,8 +504,17 @@ def regessie(df_crimi):
           'font': {'size': 15, 'color': 'black'},
           'bgcolor': 'gold'}
 
+    annotations.append(R2)
+
     fig.update_xaxes(title_text='Gefitte waarde misdrijven / 1000 inw.')
     fig.update_yaxes(title_text='Werkelijke waarde misdrijven / 1000 inw.')
     fig.update_layout(title_text='Gefitte vs. werkelijke waarden geregistreerde misdrijven / 1000 inw. 2010-2020')
-    fig.update_layout({'annotations':[R2]})
+    fig.update_layout({'annotations':annotations})
     return fig
+
+
+
+
+
+
+
