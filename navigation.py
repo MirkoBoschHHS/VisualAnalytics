@@ -307,10 +307,10 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar, gemeente):
     df_crimi_scatter = df_crimi_scatter[df_crimi_scatter['SoortMisdrijf'] == 'Misdrijven, totaal']
     df_crimi_scatter.drop(columns='SoortMisdrijf', inplace=True)
 
-    # df_crimi_scatter['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
-    # df_crimi_scatter['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
-    # df_crimi_scatter['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
-    # df_crimi_scatter['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
+    df_crimi_scatter['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
+    df_crimi_scatter['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
+    df_crimi_scatter['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
+    df_crimi_scatter['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
 
     df_crimi_scatter = df_veilig.merge(df_crimi_scatter, on='RegioS')
 
