@@ -56,7 +56,9 @@ def navigation(nav, df_crimi2, df_veilig):
 
 
 def locaties(df_crimi2):
-    polygonen = load_shp()
+    polygonen = pd.read_csv("Gemeente_data/polygonen.csv")
+
+    # polygonen = load_shp()
     df_crimi_kaart = df_crimi2[
         (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
 
@@ -90,7 +92,7 @@ def load_shp():
 
 @st.cache
 def download(date):
-    return pd.DataFrame(cbsodata.get_data('83648NED', \
+    return pd.DataFrame(cbsodata.get_data('83648NED',
                                           select=['SoortMisdrijf', 'RegioS', 'Perioden',
                                                   'GeregistreerdeMisdrijvenRelatief_2']))
 
