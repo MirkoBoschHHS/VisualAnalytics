@@ -42,11 +42,14 @@ def navigation(nav, df_crimi2, df_veilig):
     elif nav == "Cijfers criminaliteit":
         jaar = st.sidebar.select_slider("Kies een jaar om weer te geven:", [*range(2010,2021)])
 
+        # st.write(list(df_crimi2['RegioS'].unique()))
+        gemeente = st.sidebar.multiselect("Kies enkele gementes om te highlighten:", list(df_crimi2['RegioS'].unique()), 'Amsterdam')
 
-        fig1 = Spreidingsdiagram(df_crimi2, df_veilig, jaar)
+
+        fig1 = Spreidingsdiagram(df_crimi2, df_veilig, jaar, gemeente)
         fig2 = distplot(df_crimi2, jaar)
         fig3 = staafdiagram(df_crimi2, jaar)
-        fig4 = boxplot(df_crimi2)
+        fig4 = boxplot(df_crimi2, gemeente, jaar)
 
         col1, col2 = st.columns(2)
 
@@ -98,7 +101,7 @@ def download(date):
 
 #@st.cache
 def staafdiagram(df_crimi, jaar):
-    df_crimi_soort = download(datetime.datetime.now().date())
+    df_crimi_soort = download(datetime.datetime.now().month)
 
     groep = list(df_crimi_soort['SoortMisdrijf'].unique())
 
@@ -146,8 +149,8 @@ def staafdiagram(df_crimi, jaar):
     # st.plotly_chart(fig)
     return fig
 
-@st.cache
-def boxplot(df_crimi):
+#@st.cache
+def boxplot(df_crimi, gemeente, jaar):
     df_crimi_box = df_crimi[['SoortMisdrijf', 'RegioS', 'Perioden', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
     df_crimi_box = df_crimi_box[df_crimi_box['SoortMisdrijf'] == 'Misdrijven, totaal']
     df_crimi_box.drop(columns='SoortMisdrijf', inplace=True)
@@ -159,6 +162,8 @@ def boxplot(df_crimi):
                  hover_data=['Jaartal', 'Gemeente', 'Geregisteerde misdrijven per 1000 inwoners'],
                  title='Boxplot aantal misdrijven / 1000 inw. per gemeente in Nederland per jaar met mediaan',
                  color_discrete_sequence=px.colors.qualitative.Set2)
+
+
 
     _10 = {'x': 0,
            'y': 53.5,
@@ -216,22 +221,56 @@ def boxplot(df_crimi):
            'text': '<b>34.1</b>',
            'font': {'size': 13, 'color': 'black'}}
 
-    fig.update_layout({'annotations': [_10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20]})
+    # st.write(df_crimi_box)
+
+
+    def x_cor(stad, jaar):
+        return jaar-2010 #df_crimi_box.loc[df_crimi_box['Gemeente'] == str(stad)].iat[(jaar-2010), 1]
+
+    def y_cor(stad, jaar):
+        return df_crimi_box.loc[df_crimi_box['Gemeente'] == str(stad)].iat[(jaar-2010), 2]
+
+    # st.write(y_cor("Aalsmeer", jaar))
+
+
+    def gemeente_toevoegen(gemeente, jaar):
+        a = {'x': x_cor(gemeente, jaar),
+               'y': y_cor(gemeente, jaar),
+               'showarrow': True,
+               # 'arrowhead': 5,
+               'text': '<b>' + gemeente + '</b>',
+               'font': {'size': 10, 'color': 'black'}}
+        return a
+
+    annotations = []
+    for g in gemeente:
+        try:
+            annotations.append(gemeente_toevoegen(g, jaar))
+        except:
+            pass
+
+
+    for i in [_10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20]:
+        annotations.append(i)
+
+    # annotations.append([_10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20])
+
+    fig.update_layout({'annotations': annotations})
 
     # st.plotly_chart(fig)
     return fig
 
-@st.cache
-def Spreidingsdiagram(df_crimi, df_veilig, jaar):
+#@st.cache
+def Spreidingsdiagram(df_crimi, df_veilig, jaar, gemeente):
     df_crimi_scatter = df_crimi[df_crimi['Perioden'] == str(jaar)][
         ['SoortMisdrijf', 'RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
     df_crimi_scatter = df_crimi_scatter[df_crimi_scatter['SoortMisdrijf'] == 'Misdrijven, totaal']
     df_crimi_scatter.drop(columns='SoortMisdrijf', inplace=True)
 
-    df_crimi_scatter['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
-    df_crimi_scatter['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
-    df_crimi_scatter['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
-    df_crimi_scatter['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
+    # df_crimi_scatter['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
+    # df_crimi_scatter['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
+    # df_crimi_scatter['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
+    # df_crimi_scatter['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
 
     df_crimi_scatter = df_veilig.merge(df_crimi_scatter, on='RegioS')
 
@@ -247,6 +286,9 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
                      title='Spreidingsdiagram cijfer veiligheid vs. misdrijven / 1000 inw. per gemeente in ' + str(jaar),
                      range_y=(0, 140))
 
+
+
+
     def x_cor(stad):
         return df_crimi_scatter.loc[df_crimi_scatter['Gemeente'] == str(stad)].iat[0, 1]
 
@@ -258,34 +300,50 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
     # st.write(df_crimi_scatter.loc[df_crimi_scatter['Gemeente'] == "Amsterdam"].iat[0,2])
     # st.write(df_crimi_scatter['Gemeente'] == "Amsterdam")
     # st.write(df_crimi_scatter.iat[0,1])
+    def gemeente_toevoegen(gemeente):
+        a = {'x': x_cor(gemeente),
+               'y': y_cor(gemeente),
+               'showarrow': True,
+               'arrowhead': 5,
+               'text': '<b>' + gemeente + '</b>',
+               'font': {'size': 13, 'color': 'black'}}
+        return a
 
-    ams = {'x': x_cor("Amsterdam"),
-           'y': y_cor("Amsterdam"),
-           'showarrow': True,
-           'arrowhead': 5,
-           'text': '<b>Amsterdam</b>',
-           'font': {'size': 13, 'color': 'black'}}
+    annotations = []
+    for g in gemeente:
+        try:
+            annotations.append(gemeente_toevoegen(g))
+        except:
+            pass
+    # st.write(annotations)
 
-    rot = {'x': x_cor("Rotterdam"),
-           'y': y_cor("Rotterdam"),
-           'showarrow': True,
-           'arrowhead': 5,
-           'text': '<b>Rotterdam</b>',
-           'font': {'size': 13, 'color': 'black'}}
-
-    utr = {'x': x_cor("Utrecht"),
-           'y': y_cor("Utrecht"),
-           'showarrow': True,
-           'arrowhead': 5,
-           'text': '<b>Utrecht</b>',
-           'font': {'size': 13, 'color': 'black'}}
-
-    dha = {'x': x_cor("'s-Gravenhage"),
-           'y': y_cor("'s-Gravenhage"),
-           'showarrow': True,
-           'arrowhead': 5,
-           'text': '<b>Den Haag</b>',
-           'font': {'size': 13, 'color': 'black'}}
+    # ams = {'x': x_cor("Amsterdam"),
+    #        'y': y_cor("Amsterdam"),
+    #        'showarrow': True,
+    #        'arrowhead': 5,
+    #        'text': '<b>Amsterdam</b>',
+    #        'font': {'size': 13, 'color': 'black'}}
+    #
+    # rot = {'x': x_cor("Rotterdam"),
+    #        'y': y_cor("Rotterdam"),
+    #        'showarrow': True,
+    #        'arrowhead': 5,
+    #        'text': '<b>Rotterdam</b>',
+    #        'font': {'size': 13, 'color': 'black'}}
+    #
+    # utr = {'x': x_cor("Utrecht"),
+    #        'y': y_cor("Utrecht"),
+    #        'showarrow': True,
+    #        'arrowhead': 5,
+    #        'text': '<b>Utrecht</b>',
+    #        'font': {'size': 13, 'color': 'black'}}
+    #
+    # dha = {'x': x_cor("'s-Gravenhage"),
+    #        'y': y_cor("'s-Gravenhage"),
+    #        'showarrow': True,
+    #        'arrowhead': 5,
+    #        'text': '<b>Den Haag</b>',
+    #        'font': {'size': 13, 'color': 'black'}}
 
     results = px.get_trendline_results(fig)
     # st.write(results.iloc[0]["px_fit_results"].summary())
@@ -298,14 +356,11 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar):
          'font': {'size': 15, 'color': 'black'},
          'bgcolor': 'gold'}
 
-    fig.update_layout({'annotations': [ams, rot, utr, dha, r]})
+    annotations.append(r)
+
+    fig.update_layout({'annotations': annotations})
 
     # st.plotly_chart(fig)
-
-
-
-
-
 
     return fig
 

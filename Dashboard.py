@@ -111,7 +111,7 @@ pd.set_option('display.max_columns', None) # Print alles van de DataFrame pandas
 st_autorefresh(interval=120 * 60 * 1000, key="dataframerefresh")
 
 with st.spinner("Please wait while we are downloading everything ..."):
-    df_crimi2, df_veilig = download_data(datetime.datetime.now().date())
+    df_crimi2, df_veilig = download_data(datetime.datetime.now().month)
 
 
 st.sidebar.title("Navigation")
@@ -127,3 +127,14 @@ navigation.navigation(nav, df_crimi2, df_veilig)
 
 st.sidebar.title("About")
 st.sidebar.info('This app is made by Mirko Bosch en Sjoerd Fijnje.')
+
+
+
+link1 = '[Criminaliteit](https://opendata.cbs.nl/portal.html?_la=nl&_catalog=CBS&tableId=83648NED&_theme=407)'
+link2 = '[Polygonen](https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/geografische-data/wijk-en-buurtkaart-2020)'
+link3 = '[Veiligheidsgevoel](https://opendata.cbs.nl/portal.html?_la=nl&_catalog=CBS&tableId=81877NED&_theme=413)'
+link4 = '[Regionale kerncijfers](https://opendata.cbs.nl/portal.html?_la=nl&_catalog=CBS&tableId=70072ned&_theme=239)'
+# st.markdown(link, unsafe_allow_html=True)
+
+st.sidebar.title("Bronnen")
+st.sidebar.info(link1 + ' , ' + link2 + ' , ' + link3 + ' , ' + link4)
