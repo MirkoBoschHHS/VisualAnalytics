@@ -43,7 +43,7 @@ def navigation(nav, df_crimi2, df_veilig):
         jaar = st.sidebar.select_slider("Kies een jaar om weer te geven:", [*range(2010,2021)])
 
 
-        fig1 = Spreidingsdiagram(df_crimi2, df_veilig)
+        fig1 = Spreidingsdiagram(df_crimi2, df_veilig, jaar)
         fig2 = distplot(df_crimi2, jaar)
         fig3 = staafdiagram(df_crimi2, jaar)
         fig4 = boxplot(df_crimi2)
@@ -207,8 +207,8 @@ def boxplot(df_crimi):
     return fig
 
 @st.cache
-def Spreidingsdiagram(df_crimi, df_veilig):
-    df_crimi_scatter = df_crimi[df_crimi['Perioden'] == '2019'][
+def Spreidingsdiagram(df_crimi, df_veilig, jaar):
+    df_crimi_scatter = df_crimi[df_crimi['Perioden'] == str(jaar)][
         ['SoortMisdrijf', 'RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']]
     df_crimi_scatter = df_crimi_scatter[df_crimi_scatter['SoortMisdrijf'] == 'Misdrijven, totaal']
     df_crimi_scatter.drop(columns='SoortMisdrijf', inplace=True)
