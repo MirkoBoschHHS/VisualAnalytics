@@ -57,7 +57,7 @@ def navigation(nav, df_crimi2, df_veilig):
 
 def locaties(df_crimi2):
     polygonen_2 = load_polygonen()
-    polygonen_2['geometry'] = polygonen_2['geometry'].simplify(500)
+
 
     df_crimi_kaart = df_crimi2[
         (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
@@ -82,7 +82,9 @@ def locaties(df_crimi2):
 
 @st.cache
 def load_polygonen():
-    return pd.read_pickle('Gemeente_data/polygonen.pkl')
+    polygonen_2 = pd.read_pickle('Gemeente_data/polygonen.pkl')
+    polygonen_2['geometry'] = polygonen_2['geometry'].simplify(500)
+    return polygonen_2
 
 
 @st.cache
