@@ -64,27 +64,35 @@ def navigation(nav, df_crimi2, df_veilig):
 def locaties(df_crimi2):
     polygonen_2 = load_polygonen()
 
-
+    polygonen_2 = polygonen_2.merge(df_crimi2[['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']], on='RegioS', how='left')
 
     df_crimi_kaart = df_crimi2[
         (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
 
-    m = folium.Map(location=[52.25, 5.4],
+    m = folium.Map(location=[52.25, 5.5],
                    tiles='Carto DB Positron',
-                   zoom_start=8)
+                   zoom_start=8,
+                   min_zoom=7,
+                   max_zoom=10)
+
+    bins = list(df_crimi2['GeregistreerdeMisdrijvenPer1000Inw_3'].quantile([0, 1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6, 1]))
 
     folium.Choropleth(geo_data=polygonen_2,
                       name='geometry',
-                      data=df_crimi_kaart,
+                      data=df_crimi2,
                       columns=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'],
                       key_on='feature.properties.RegioS',
                       fill_color='YlOrRd',
-                      fill_opacity=0.7,
+                      fill_opacity=0.6,
                       line_opacity=0.2,
                       legend_name='Geregistreerde misdrijven per 1000 inwoners',
-                      nan_fill_color='black').add_to(m)
+                      nan_fill_opacity=0.8,
+                      bins=bins,
+                      nan_fill_color='dimgray',
+                      highlight=True).add_to(m).geojson.add_child(
+        folium.features.GeoJsonTooltip(fields=['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3'], labels=False))
 
-
+    # plugins.Fullscreen().add_to(m)
 
 
 
