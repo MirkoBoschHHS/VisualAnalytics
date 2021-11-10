@@ -1,7 +1,7 @@
 import streamlit as st
 import base64
 
-import geopandas as gpd
+# import geopandas as gpd
 
 import streamlit as st
 import pandas as pd
@@ -40,9 +40,12 @@ def navigation(nav, df_crimi2, df_veilig):
         st.dataframe(df_crimi2)
 
     elif nav == "Cijfers criminaliteit":
+        jaar = st.sidebar.select_slider("Kies een jaar om weer te geven:", [*range(2010,2021)])
+
+
         fig1 = Spreidingsdiagram(df_crimi2, df_veilig)
-        fig2 = distplot(df_crimi2)
-        fig3 = staafdiagram(df_crimi2)
+        fig2 = distplot(df_crimi2, jaar)
+        fig3 = staafdiagram(df_crimi2, jaar)
         fig4 = boxplot(df_crimi2)
 
         col1, col2 = st.columns(2)
@@ -92,7 +95,7 @@ def download(date):
                                                   'GeregistreerdeMisdrijvenRelatief_2']))
 
 @st.cache
-def staafdiagram(df_crimi):
+def staafdiagram(df_crimi, jaar):
     df_crimi_soort = download(datetime.datetime.now().date())
 
     groepen = ['Misdrijven, totaal',
@@ -105,7 +108,7 @@ def staafdiagram(df_crimi):
                '7 Vuurwapenmisdrijven',
                '9 Misdrijven overige wetten']
 
-    df_crimi_soort = df_crimi_soort[(df_crimi_soort['RegioS'] == 'Nederland') & (df_crimi_soort['Perioden'] == '2020')]
+    df_crimi_soort = df_crimi_soort[(df_crimi_soort['RegioS'] == 'Nederland') & (df_crimi_soort['Perioden'] == str(jaar))]
     df_crimi_soort = df_crimi_soort[df_crimi_soort['SoortMisdrijf'].isin(groepen)]
     df_crimi_soort.drop(columns=['RegioS', 'Perioden'], inplace=True)
 
@@ -122,7 +125,7 @@ def staafdiagram(df_crimi):
                  y='Percentage geregistreerde misdrijven',
                  color='Soort misdrijf',
                  color_discrete_sequence=px.colors.qualitative.G10,
-                 title='Staafdiagram percentages soorten misdrijven in Nederland in 2020',
+                 title='Staafdiagram percentages soorten misdrijven in Nederland in '+ str(jaar),
                  labels={'index': 'Soort misdrijf'})
 
     # fig.show()
@@ -271,9 +274,9 @@ def Spreidingsdiagram(df_crimi, df_veilig):
 
 
 @st.cache
-def distplot(df_crimi):
+def distplot(df_crimi, jaar):
     df_crimi_dist = df_crimi[df_crimi['SoortMisdrijf'] == 'Misdrijven, totaal']
-    df_crimi_dist = df_crimi_dist[df_crimi_dist['Perioden'] == '2020']
+    df_crimi_dist = df_crimi_dist[df_crimi_dist['Perioden'] == str(jaar)]
     df_crimi_dist = df_crimi_dist[['RegioS', 'Perioden', 'OpgehelderdeMisdrijvenRelatief_5']]
     df_crimi_dist.columns = ['Gemeente', 'Jaartal', 'Percentage opgehelderde misdrijven']
     df_crimi_dist.drop(columns='Jaartal', inplace=True)
@@ -285,7 +288,7 @@ def distplot(df_crimi):
 
     fig.update_xaxes(title_text='Percentage opgehelderde misdrijven', range=[8, 42])
     fig.update_yaxes(title_text='Dichtheid')
-    fig.update_layout(title_text='Distplot percentage opgehelderde misdrijven per gemeente in Nederland in 2020')
+    fig.update_layout(title_text='Distplot percentage opgehelderde misdrijven per gemeente in Nederland in '+ str(jaar))
 
     # fig.show()
     return fig
