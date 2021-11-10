@@ -114,7 +114,7 @@ def staafdiagram(df_crimi, jaar):
                ' Vuurwapenmisdrijven',
                ' Misdrijven overige wetten']
 
-    groepen = groep
+   
     # st.write(groepen)
 
     df_crimi_soort = df_crimi_soort[(df_crimi_soort['RegioS'] == 'Nederland') & (df_crimi_soort['Perioden'] == str(jaar))]
