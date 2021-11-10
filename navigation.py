@@ -33,7 +33,7 @@ def navigation(nav, df_crimi2, df_veilig):
         with col2:
             folium_static(m)
 
-    # elif nav == "Tweede":
+
 
 
 
@@ -65,14 +65,12 @@ def locaties(df_crimi2):
 
     # polygonen_2 = load_shp()
 
-    st.write(polygonen_2.head())
     st.write("HOI")
 
     df_crimi_kaart = df_crimi2[
         (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
     st.write("Hallo")
     m = folium.Map(location=[52.25, 5.4],
-                   tiles='Carto DB Positron',
                    zoom_start=8)
     st.write("Laatste")
     folium.Choropleth(geo_data=polygonen_2,
