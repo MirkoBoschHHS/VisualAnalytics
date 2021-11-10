@@ -33,7 +33,7 @@ def navigation(nav, df_crimi2, df_veilig):
         # with col2:
         #     folium_static(m)
         import streamlit.components.v1 as components
-        HtmlFile = open("map.html", 'r', encoding='utf-8')
+        HtmlFile = open("Gemeente_data/map.html", 'r', encoding='utf-8')
         source_code = HtmlFile.read()
         # print(source_code)
         components.html(source_code)
