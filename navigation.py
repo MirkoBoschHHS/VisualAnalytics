@@ -86,11 +86,16 @@ def locaties(df_crimi2):
     df_crimi2 = df_crimi2[(df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
     polygonen_2 = polygonen_2.merge(df_crimi2[['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']], on='RegioS', how='left')
 
-    df_crimi_kaart = df_crimi2[
-        (df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
-
-
-
+    df_crimi2['RegioS'].replace('Beek (L.)', 'Beek', inplace=True)
+    df_crimi2['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
+    df_crimi2['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
+    df_crimi2['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
+    df_crimi2['RegioS'].replace('Laren (NH.)', 'Laren', inplace=True)
+    df_crimi2['RegioS'].replace('Middelburg (Z.)', 'Middelburg', inplace=True)
+    df_crimi2['RegioS'].replace('Rijswijk (ZH.)', 'Rijswijk', inplace=True)
+    df_crimi2['RegioS'].replace('Stein (L.)', 'Stein', inplace=True)
+    df_crimi2['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
+    
     m = folium.Map(location=[52.25, 5.5],
                    tiles='Carto DB Positron',
                    zoom_start=8,
@@ -302,10 +307,10 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar, gemeente):
     df_crimi_scatter = df_crimi_scatter[df_crimi_scatter['SoortMisdrijf'] == 'Misdrijven, totaal']
     df_crimi_scatter.drop(columns='SoortMisdrijf', inplace=True)
 
-    # df_crimi_scatter['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
-    # df_crimi_scatter['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
-    # df_crimi_scatter['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
-    # df_crimi_scatter['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
+    df_crimi_scatter['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
+    df_crimi_scatter['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
+    df_crimi_scatter['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
+    df_crimi_scatter['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
 
     df_crimi_scatter = df_veilig.merge(df_crimi_scatter, on='RegioS')
 
