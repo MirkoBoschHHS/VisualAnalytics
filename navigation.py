@@ -84,8 +84,7 @@ def locaties(df_crimi2):
     polygonen_2 = load_polygonen()
 
     df_crimi2 = df_crimi2[(df_crimi2['Perioden'] == '2020') & (df_crimi2['SoortMisdrijf'] == 'Misdrijven, totaal')]
-    polygonen_2 = polygonen_2.merge(df_crimi2[['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']], on='RegioS', how='left')
-
+   
     df_crimi2['RegioS'].replace('Beek (L.)', 'Beek', inplace=True)
     df_crimi2['RegioS'].replace("'s-Gravenhage (gemeente)", "'s-Gravenhage", inplace=True)
     df_crimi2['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
@@ -95,6 +94,8 @@ def locaties(df_crimi2):
     df_crimi2['RegioS'].replace('Rijswijk (ZH.)', 'Rijswijk', inplace=True)
     df_crimi2['RegioS'].replace('Stein (L.)', 'Stein', inplace=True)
     df_crimi2['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
+    
+     polygonen_2 = polygonen_2.merge(df_crimi2[['RegioS', 'GeregistreerdeMisdrijvenPer1000Inw_3']], on='RegioS', how='left')
     
     m = folium.Map(location=[52.25, 5.5],
                    tiles='Carto DB Positron',
