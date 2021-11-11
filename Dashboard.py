@@ -94,7 +94,7 @@ def download_data(date):
     df_veilig['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
     df_veilig['RegioS'].replace('Groningen (gemeente)', 'Groningen', inplace=True)
 
-    df_veilig = df_veilig[df_veilig['RapportcijferVeiligheidInBuurt_18'] >= 6.6]
+    df_veilig = df_veilig[df_veilig['RapportcijferVeiligheidInBuurt_18'] >= 4]
 
     df_veilig.index = range(0, len(df_veilig))
     df_veilig = df_veilig[~(df_veilig.index.isin([0, 53, 54, 55, 56, 57]))]
