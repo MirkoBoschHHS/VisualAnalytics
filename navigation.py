@@ -25,7 +25,7 @@ from statsmodels.formula.api import ols
 def navigation(nav, df_crimi2, df_veilig):
 
     if nav == "Home":
-        st.image("Afbeelding/Home_page.gif", width=1400,)
+        st.image("Afbeelding/Home_page2.gif", width=1400,)
 
 
     elif nav == "Locaties criminaliteit":
