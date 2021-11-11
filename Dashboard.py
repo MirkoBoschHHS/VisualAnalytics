@@ -80,8 +80,8 @@ def download_data(date):
 
     df_veilig = df_veilig[['RegioS', 'Perioden', 'RapportcijferVeiligheidInBuurt_18']]
 
-    df_veilig = df_veilig[df_veilig['Perioden'] == '2019']
-    df_veilig.drop(columns='Perioden', inplace=True)
+    # df_veilig = df_veilig[df_veilig['Perioden'] == '2019']
+    # df_veilig.drop(columns='Perioden', inplace=True)
 
     df_veilig = df_veilig[~(df_veilig['RegioS'].str.contains('RE'))]
     df_veilig = df_veilig[~(df_veilig['RegioS'].str.contains('PD'))]

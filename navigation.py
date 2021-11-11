@@ -312,7 +312,20 @@ def Spreidingsdiagram(df_crimi, df_veilig, jaar, gemeente):
     df_crimi_scatter['RegioS'].replace('Hengelo (O.)', 'Hengelo', inplace=True)
     df_crimi_scatter['RegioS'].replace('Utrecht (gemeente)', 'Utrecht', inplace=True)
 
+    j = jaar
+    if(j <= 2013):
+        j = 2013
+    if(j >= 2019):
+        j = 2019
+    if(j == 2018):
+        j = 2017
+
+    df_veilig = df_veilig[df_veilig['Perioden'] == str(j)]
+    df_veilig.drop(columns='Perioden', inplace=True)
+
+
     df_crimi_scatter = df_veilig.merge(df_crimi_scatter, on='RegioS')
+
 
     df_crimi_scatter.columns = ['Gemeente', 'Cijfer enquête veiligheid in de buurt',
                                 'Geregisteerde misdrijven per 1000 inwoners']
